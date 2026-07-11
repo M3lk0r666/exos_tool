@@ -1,0 +1,17 @@
+[Unit]
+Description=EXOS-Tool queue worker (procesamiento de tech-supports)
+After=network.target mysql.service
+
+[Service]
+User=www-data
+Group=www-data
+Restart=always
+RestartSec=5
+# --timeout debe superar el timeout del ProcessCaptureJob (300 s)
+ExecStart=/usr/bin/php /var/www/exos_tool/artisan queue:work database \
+    --sleep=3 --tries=1 --timeout=360 --max-jobs=500 --max-time=3600
+StandardOutput=append:/var/www/exos_tool/storage/logs/queue.log
+StandardError=append:/var/www/exos_tool/storage/logs/queue.log
+
+[Install]
+WantedBy=multi-user.target

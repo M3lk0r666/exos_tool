@@ -1,0 +1,76 @@
+{
+ "sysname": "SWITCH-PB-Z4-Auditorio",
+ "systype": "X440G2-48p-10G4",
+ "sysmac": "00:04:96:B4:44:65",
+ "uptime": "542 days 2 hours 37 minutes 42 seconds",
+ "boot_time": "Mon Jan  6 17:01:35 2025",
+ "boot_count": "71",
+ "current_time": "Thu Jul  2 19:39:18 2026",
+ "image_booted": "primary",
+ "primary_ver": "22.7.1.2",
+ "config": "primary.cfg",
+ "config_saved": "Tue Mar  9 22:59:57 2021",
+ "capture_dt": "2026-07-02T19:39:18",
+ "fw_version": "22.7.1.2",
+ "fw_build_date": "Thu Jul 11 23:31:11 EDT 2019",
+ "fw_build_year": 2019,
+ "bootrom": "1.0.1.8",
+ "slots": [],
+ "slot_serials": {},
+ "slot_roles": {},
+ "odometer_days": {},
+ "temps": [
+  {
+   "unit": "Switch",
+   "temp": 61.5,
+   "status": "Normal",
+   "max": 110.0
+  }
+ ],
+ "fan_ok": 4,
+ "fan_bad": 0,
+ "fantray_bad": [],
+ "psu_on": 1,
+ "psu_failed": 0,
+ "power_usage": "",
+ "cpu_1h": 1.0,
+ "cpu_high_procs": [
+  [
+   "57.8",
+   71.7
+  ],
+  [
+   "0.2",
+   28.8
+  ],
+  [
+   "9.2",
+   99.9
+  ]
+ ],
+ "mem_total_kb": 1048576,
+ "mem_free_kb": 721104,
+ "port_flaps": {},
+ "ports_active": 0,
+ "rxerrors": [],
+ "stack_rxerrors": [],
+ "congestion": [],
+ "log_total": 993,
+ "reboots": [],
+ "log_errors": [],
+ "optic_conflicts": [],
+ "auth_fails": 0,
+ "link_downs": {},
+ "speed_10m": [],
+ "stack_ring": false,
+ "stack_nodes": [],
+ "stack_failed_nodes": [],
+ "core_dumps": [],
+ "fdb_total": "93",
+ "ssh": "Disabled (Key invalid, tcp port 22 vr all)",
+ "telnet": "Disabled (tcp port 23 vr all)",
+ "snmp_disabled": false,
+ "ntp_configured": false,
+ "license": "Edge",
+ "poe": []
+}

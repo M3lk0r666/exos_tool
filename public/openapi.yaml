@@ -1,0 +1,79 @@
+openapi: 3.0.3
+info:
+  title: EXOS-Tool API
+  description: >
+    API REST para subir archivos "show tech-support all" de Extreme Networks EXOS
+    y consultar análisis, hallazgos y métricas. Autenticación mediante token
+    Bearer (Laravel Sanctum, generado en el perfil del usuario → API Tokens).
+  version: "1.0"
+servers:
+  - url: /api/v1
+security:
+  - bearerAuth: []
+paths:
+  /clients:
+    get:
+      summary: Lista de clientes
+      responses:
+        "200": { description: Arreglo de clientes con conteo de equipos }
+  /devices:
+    get:
+      summary: Lista de equipos
+      parameters:
+        - { name: client_id, in: query, schema: { type: integer } }
+      responses:
+        "200": { description: Arreglo de equipos con serie, MAC y criticidad }
+  /captures:
+    get:
+      summary: Lista paginada de capturas
+      parameters:
+        - { name: client_id, in: query, schema: { type: integer } }
+        - { name: device_id, in: query, schema: { type: integer } }
+        - { name: status, in: query, schema: { type: string, enum: [pending, processing, completed, error] } }
+        - { name: per_page, in: query, schema: { type: integer, maximum: 100 } }
+      responses:
+        "200": { description: Página de capturas }
+    post:
+      summary: Sube un archivo tech-support y lo encola para análisis
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [client_id, file]
+              properties:
+                client_id: { type: integer }
+                file: { type: string, format: binary, description: ".txt/.log de show tech-support all" }
+      responses:
+        "201": { description: "En cola: devuelve capture_id y status" }
+        "409": { description: Archivo duplicado (mismo SHA-256) }
+        "422": { description: Validación fallida }
+  /captures/{id}:
+    get:
+      summary: Detalle de una captura (incluye resumen parseado y advertencias)
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      responses:
+        "200": { description: Captura con summary }
+        "404": { description: No encontrada }
+  /captures/{id}/findings:
+    get:
+      summary: Hallazgos del análisis de la captura
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      responses:
+        "200": { description: Hallazgos con severidad, evidencia y ubicación }
+  /captures/{id}/metrics:
+    get:
+      summary: Métricas normalizadas de la captura
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+        - { name: category, in: query, schema: { type: string, example: ports } }
+      responses:
+        "200": { description: Métricas por categoría/entidad }
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

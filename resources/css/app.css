@@ -1,0 +1,27 @@
+/* WireUI v2 (incluye @import "tailwindcss", @tailwindcss/forms y su @theme de colores) */
+@import '../../vendor/wireui/wireui/ts/global.css';
+
+/* Flowbite 4 */
+@import 'flowbite/src/themes/default';
+@plugin 'flowbite/plugin';
+@source '../../node_modules/flowbite';
+
+/* Plugins adicionales */
+@plugin '@tailwindcss/typography';
+
+/* Dark mode por clase .dark (Flowbite/Jetstream) */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Rutas de contenido adicionales (relativas a este archivo) */
+@source '../views';
+@source '../../vendor/laravel/jetstream/resources/views';
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views';
+@source '../../vendor/rappasoft/laravel-livewire-tables/resources/views';
+
+@theme {
+    --font-sans: 'Figtree', ui-sans-serif, system-ui, sans-serif;
+}
+
+[x-cloak] {
+    display: none;
+}
