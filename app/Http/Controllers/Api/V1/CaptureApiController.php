@@ -41,6 +41,7 @@ class CaptureApiController extends Controller
 
         $request->validate([
             'client_id' => ['required', 'integer', 'exists:clients,id'],
+            'analysis_type' => ['sometimes', 'in:tech_support,log'],
             'file' => ['required', 'file', 'extensions:'.implode(',', $extensions), 'max:'.($maxMb * 1024)],
         ]);
 
@@ -64,6 +65,7 @@ class CaptureApiController extends Controller
 
         $capture = Capture::create([
             'client_id' => $client->id,
+            'analysis_type' => $request->input('analysis_type', 'tech_support'),
             'uploaded_by' => $request->user()->id,
             'uploaded_at' => now(),
             'original_filename' => $file->getClientOriginalName(),
@@ -146,6 +148,7 @@ class CaptureApiController extends Controller
     {
         return [
             'id' => $c->id,
+            'analysis_type' => $c->analysis_type,
             'client' => $c->client?->only(['id', 'name']),
             'device' => $c->device?->only(['id', 'sysname', 'alias', 'serial_number']),
             'status' => $c->status->value,

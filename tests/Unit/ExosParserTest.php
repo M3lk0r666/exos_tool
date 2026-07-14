@@ -183,6 +183,11 @@ class ExosParserTest extends TestCase
         // Bloque "!  show fans" agregado manualmente (tercer delimitador)
         $this->assertSame(16, $p->fansOk);
         $this->assertCount(8, $p->fanTrays);
+
+        // Detalle por ventilador con RPM (show fans / show fans detail)
+        $this->assertCount(4, $p->fanDetails['Fan Tray-1 FanTray-1']['fans']);
+        $this->assertSame(7021, $p->fanDetails['Fan Tray-1 FanTray-1']['fans'][0]['rpm']);
+        $this->assertSame([], $p->fanDetails['FanTray-5']['fans']); // tray vacío
         $this->assertSame('Empty', $p->fanTrays['FanTray-5']);
         $this->assertSame('Operational', $p->fanTrays['Fan Tray-1 FanTray-1']);
 

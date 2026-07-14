@@ -94,6 +94,75 @@
                 </span>
             @endforeach
         </div>
+
+        {{-- Temperaturas y ventiladores (por slot en stack, únicos en standalone) --}}
+        @php($rsummary = $capture->raw_summary ?? [])
+        @php($temps = $rsummary['temperatures'] ?? [])
+        @php($fanDetail = $rsummary['fans']['detail'] ?? [])
+        @if ($temps !== [] || $fanDetail !== [])
+            <div class="grid gap-4 lg:grid-cols-2 mt-4">
+                @if ($temps !== [])
+                    <div>
+                        <h4 class="text-sm font-semibold text-gray-900 dark:text-white mb-2">Temperaturas</h4>
+                        <table class="w-full text-xs text-left text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-gray-700 rounded-lg">
+                            <thead class="text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                                <tr>
+                                    <th class="px-3 py-2">Unidad</th>
+                                    <th class="px-3 py-2">Actual</th>
+                                    <th class="px-3 py-2">Estado</th>
+                                    <th class="px-3 py-2">Máx. fábrica</th>
+                                    <th class="px-3 py-2">Margen</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($temps as $t)
+                                    <tr class="border-t border-gray-100 dark:border-gray-700">
+                                        <td class="px-3 py-2 font-medium text-gray-900 dark:text-white">{{ $t['unit'] }}</td>
+                                        <td class="px-3 py-2">{{ $t['temp'] }} °C</td>
+                                        <td class="px-3 py-2 {{ $t['status'] === 'Normal' ? 'text-green-600' : 'text-red-600 font-bold' }}">{{ $t['status'] }}</td>
+                                        <td class="px-3 py-2">{{ $t['max'] }} °C</td>
+                                        <td class="px-3 py-2">{{ round($t['max'] - $t['temp'], 1) }} °C</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                @endif
+
+                @if ($fanDetail !== [])
+                    <div>
+                        <h4 class="text-sm font-semibold text-gray-900 dark:text-white mb-2">Ventiladores (show fans detail)</h4>
+                        <table class="w-full text-xs text-left text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-gray-700 rounded-lg">
+                            <thead class="text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                                <tr>
+                                    <th class="px-3 py-2">Fan tray</th>
+                                    <th class="px-3 py-2">Estado</th>
+                                    <th class="px-3 py-2">Ventiladores (RPM)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($fanDetail as $tray => $detail)
+                                    <tr class="border-t border-gray-100 dark:border-gray-700">
+                                        <td class="px-3 py-2 font-medium text-gray-900 dark:text-white">{{ $tray }}</td>
+                                        <td class="px-3 py-2 {{ in_array($detail['state'], ['Operational', 'Empty', null], true) ? 'text-green-600' : 'text-red-600 font-bold' }}">
+                                            {{ $detail['state'] ?? '—' }}
+                                        </td>
+                                        <td class="px-3 py-2">
+                                            @forelse ($detail['fans'] as $fan)
+                                                <span class="{{ $fan['state'] === 'Operational' ? '' : 'text-red-600 font-bold' }}">
+                                                    {{ $fan['fan'] }}: {{ $fan['rpm'] !== null ? number_format($fan['rpm']).' RPM' : $fan['state'] }}</span>@if (! $loop->last) · @endif
+                                            @empty
+                                                —
+                                            @endforelse
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                @endif
+            </div>
+        @endif
     </div>
 
     {{-- Secciones editables (WYSIWYG) --}}

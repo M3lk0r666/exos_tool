@@ -26,10 +26,18 @@ class CreateNewUser implements CreatesNewUsers
             'terms' => Jetstream::hasTermsAndPrivacyPolicyFeature() ? ['accepted', 'required'] : '',
         ])->validate();
 
-        return User::create([
+        $user = User::create([
             'name' => $input['name'],
             'email' => $input['email'],
             'password' => Hash::make($input['password']),
         ]);
+
+        // Los usuarios auto-registrados entran como Ingeniero (acceso operativo
+        // completo). El administrador puede cambiar el rol en Usuarios.
+        if (\Spatie\Permission\Models\Role::where('name', 'engineer')->exists()) {
+            $user->assignRole('engineer');
+        }
+
+        return $user;
     }
 }

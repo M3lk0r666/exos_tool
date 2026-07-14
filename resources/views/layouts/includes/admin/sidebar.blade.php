@@ -43,22 +43,32 @@
             'header' => 'ADMINISTRACIÓN',
         ],
         [
+            'name' => 'Usuarios',
+            'icon' => 'ri-group-line',
+            'href' => route('admin.users.index'),
+            'active' => request()->routeIs('admin.users.*'),
+            'can' => 'users.manage',
+        ],
+        [
             'name' => 'Reglas de análisis',
             'icon' => 'ri-settings-3-line',
             'href' => route('admin.rules.index'),
             'active' => request()->routeIs('admin.rules.*'),
+            'can' => 'rules.manage',
         ],
         [
             'name' => 'Configuración',
             'icon' => 'ri-tools-line',
             'href' => route('admin.settings.index'),
             'active' => request()->routeIs('admin.settings.*'),
+            'can' => 'settings.manage',
         ],
         [
             'name' => 'Auditoría',
             'icon' => 'ri-history-line',
             'href' => route('admin.audit.index'),
             'active' => request()->routeIs('admin.audit.*'),
+            'can' => 'audit.view',
         ],
         [
             'name' => 'API',
@@ -75,6 +85,7 @@
     <div class="h-full px-3 pb-4 overflow-y-auto bg-white dark:bg-gray-800">
         <ul class="space-y-2 font-medium">
             @foreach ($links as $link)
+                @continue(isset($link['can']) && auth()->user()->cannot($link['can']))
                 <li>
                     @isset($link['header'])
                         <div class="px-2 py-2 texst-xs font-bold text-gray-500 uppercase">

@@ -15,6 +15,12 @@
                     @if ($capture->error_message) title="{{ $capture->error_message }}" @endif>
                     {{ $capture->status->label() }}
                 </span>
+                <span class="text-xs font-medium px-2.5 py-0.5 rounded-full
+                    {{ $capture->isLogAnalysis()
+                        ? 'bg-teal-100 text-teal-800 dark:bg-teal-900 dark:text-teal-300'
+                        : 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300' }}">
+                    {{ $capture->analysisTypeLabel() }}
+                </span>
                 <span class="text-sm text-gray-500 dark:text-gray-400">{{ $capture->client?->name }}</span>
             </div>
 

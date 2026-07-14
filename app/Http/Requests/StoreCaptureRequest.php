@@ -19,6 +19,7 @@ class StoreCaptureRequest extends FormRequest
 
         return [
             'client_id' => ['required', 'integer', 'exists:clients,id'],
+            'analysis_type' => ['required', 'in:tech_support,log'],
             'files' => ['required', 'array', 'min:1', 'max:20'],
             'files.*' => [
                 'required',

@@ -16,6 +16,7 @@ class Capture extends Model
     protected $fillable = [
         'device_id',
         'client_id',
+        'analysis_type',
         'uploaded_by',
         'captured_at',
         'uploaded_at',
@@ -71,5 +72,15 @@ class Capture extends Model
     public function reports(): HasMany
     {
         return $this->hasMany(Report::class);
+    }
+
+    public function isLogAnalysis(): bool
+    {
+        return $this->analysis_type === 'log';
+    }
+
+    public function analysisTypeLabel(): string
+    {
+        return $this->isLogAnalysis() ? 'Log' : 'Tech-support';
     }
 }

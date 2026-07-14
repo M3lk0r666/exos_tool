@@ -49,7 +49,7 @@ class ProcessCaptureJob implements ShouldQueue
         try {
             $text = Storage::disk('local')->get($capture->file_path);
 
-            $parsed = $parser->parse($text);
+            $parsed = $parser->parse($text, $capture->analysis_type ?? 'tech_support');
 
             DB::transaction(function () use ($capture, $parsed, $text, $deviceResolver, $metricsRecorder, $analysisEngine) {
                 $device = $deviceResolver->resolve($capture->client, $parsed);

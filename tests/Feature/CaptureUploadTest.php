@@ -51,6 +51,7 @@ class CaptureUploadTest extends TestCase
     {
         $response = $this->actingAs($this->engineer)->post(route('admin.captures.store'), [
             'client_id' => $this->client->id,
+            'analysis_type' => 'tech_support',
             'files' => [$this->fakeTechSupport()],
         ]);
 
@@ -72,12 +73,14 @@ class CaptureUploadTest extends TestCase
 
         $this->actingAs($this->engineer)->post(route('admin.captures.store'), [
             'client_id' => $this->client->id,
+            'analysis_type' => 'tech_support',
             'files' => [$file],
         ]);
 
         // Mismo contenido => mismo SHA-256 => se omite
         $this->actingAs($this->engineer)->post(route('admin.captures.store'), [
             'client_id' => $this->client->id,
+            'analysis_type' => 'tech_support',
             'files' => [$this->fakeTechSupport()],
         ]);
 
@@ -91,6 +94,7 @@ class CaptureUploadTest extends TestCase
             ->from(route('admin.captures.create'))
             ->post(route('admin.captures.store'), [
                 'client_id' => $this->client->id,
+            'analysis_type' => 'tech_support',
                 'files' => [UploadedFile::fake()->create('reporte.pdf', 10)],
             ]);
 
@@ -105,6 +109,7 @@ class CaptureUploadTest extends TestCase
 
         $response = $this->actingAs($reader)->post(route('admin.captures.store'), [
             'client_id' => $this->client->id,
+            'analysis_type' => 'tech_support',
             'files' => [$this->fakeTechSupport()],
         ]);
 

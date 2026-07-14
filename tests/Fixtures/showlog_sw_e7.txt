@@ -1,0 +1,190 @@
+* E7.3 # show log 
+03/23/2026 18:42:43.69 <Info:AAA.LogSsh> Msg from Master : Did password authentication for user hivemanager (127.0.0.1)
+03/23/2026 18:42:43.68 <Info:AAA.authPass> Login passed for user hivemanager through ssh (127.0.0.1)
+03/23/2026 18:31:52.39 <Info:Inlets.Info> PID:2089 Starting inlets process on VR:VR-Default vrf:vrf_258
+03/23/2026 18:31:52.33 <Noti:cm.sys.ApplCfgObjOptUnsuprt> The "netTools" application "inletsCfg" configuration object "srcIp" option is not supported.
+03/23/2026 18:31:42.17 <Info:Telemetry.Info> Started telegraf /exos/bin/telegraf using config:/tmp/telegraf.cfg  pipeName:/tmp/toTelegraf  PID:2733  loggerPid:2732
+03/23/2026 18:31:42.16 <Info:Telemetry.Info> Starting telegraf process on VR:VR-Default vrf:vrf_258
+03/23/2026 18:31:42.16 <Info:Telemetry.Info> Telemetry VR Config Change. NONE -> VR-Default
+03/23/2026 18:31:42.16 <Noti:cm.sys.ApplCfgObjOptUnsuprt> The "telemetry" application "telemetryGlobalCfg" configuration object "srcIp" option is not supported.
+03/23/2026 18:31:42.14 <Noti:cm.sys.ApplCfgObjOptUnsuprt> The "netTools" application "inletsCfg" configuration object "srcIp" option is not supported.
+03/23/2026 18:31:38.08 <Info:Telemetry.Info> Output URL https://va.extremecloudiq.com/telemetry/v1/state/platform flushInterval 1  type:NONE(0)  priority:NONE(0) ADDED.
+03/23/2026 18:31:38.08 <Info:Telemetry.Info> URL:https://va.extremecloudiq.com/telemetry/v1/state/platform  maxRetries automatically set to 3.
+03/23/2026 18:31:38.08 <Info:Telemetry.Info> DEBUG: telemetryUrl_setDefaultMaxRetryForStatsAndEvents() Enter. URL:https://va.extremecloudiq.com/telemetry/v1/state/platform.
+03/23/2026 18:31:38.08 <Info:Telemetry.Info> URL:https://va.extremecloudiq.com/telemetry/v1/state/platform  flushInterval:1  HTTP Retry List defaulted to 408, 499.
+03/23/2026 18:31:38.07 <Info:Telemetry.Info> Output URL https://va.extremecloudiq.com/telemetry/v1/stats/platform flushInterval 10  type:NONE(0)  priority:NONE(0) ADDED.
+03/23/2026 18:31:38.07 <Info:Telemetry.Info> URL:https://va.extremecloudiq.com/telemetry/v1/stats/platform  maxRetries automatically set to 0.
+03/23/2026 18:31:38.07 <Info:Telemetry.Info> DEBUG: telemetryUrl_setDefaultMaxRetryForStatsAndEvents() Enter. URL:https://va.extremecloudiq.com/telemetry/v1/stats/platform.
+03/23/2026 18:31:38.07 <Info:Telemetry.Info> URL:https://va.extremecloudiq.com/telemetry/v1/stats/platform  flushInterval:10  HTTP Retry List defaulted to 408, 499.
+03/23/2026 18:31:38.02 <Info:AAA.createAccount> User 'admin' created admin account for user 'hivemanager' successfully.
+03/23/2026 18:31:07.65 <Info:vlan.msgs.portLinkStateUp> Port 3 link UP at speed 1 Gbps and full-duplex
+03/23/2026 18:31:07.30 <Info:vlan.msgs.portLinkStateUp> Port 5 link UP at speed 1 Gbps and full-duplex
+03/23/2026 18:31:07.19 <Info:vlan.msgs.portLinkStateUp> Port 10 link UP at speed 1 Gbps and full-duplex
+03/23/2026 18:31:07.09 <Info:vlan.msgs.portLinkStateUp> Port 4 link UP at speed 1 Gbps and full-duplex
+03/23/2026 18:31:06.46 <Info:vlan.msgs.portLinkStateUp> Port 9 link UP at speed 1 Gbps and full-duplex
+03/23/2026 18:31:06.26 <Info:vlan.msgs.portLinkStateUp> Port 1 link UP at speed 1 Gbps and full-duplex
+03/23/2026 18:31:06.09 <Info:vlan.msgs.portLinkStateUp> Port 7 link UP at speed 1 Gbps and full-duplex
+03/23/2026 18:31:05.67 <Info:vlan.msgs.portLinkStateUp> Port 8 link UP at speed 1 Gbps and full-duplex
+03/23/2026 18:31:04.33 <Info:vlan.msgs.portLinkStateUp> Port 6 link UP at speed 1 Gbps and full-duplex
+03/23/2026 18:31:03.29 <Info:vlan.msgs.portLinkStateUp> Port 2 link UP at speed 1 Gbps and full-duplex
+03/23/2026 18:30:26.36 <Info:vlan.msgs.portLinkStateUp> Port 12 link UP at speed 100 Mbps and full-duplex
+03/23/2026 18:30:25.28 <Info:vlan.msgs.portLinkStateUp> Port 13 link UP at speed 100 Mbps and full-duplex
+03/23/2026 18:30:17.82 <Info:vlan.msgs.portLinkStateDown> Port 10 link down
+03/23/2026 18:30:17.02 <Info:vlan.msgs.portLinkStateDown> Port 7 link down
+03/23/2026 18:30:16.82 <Info:vlan.msgs.portLinkStateDown> Port 3 link down
+03/23/2026 18:30:16.61 <Info:vlan.msgs.portLinkStateDown> Port 5 link down
+03/23/2026 18:30:16.28 <Info:vlan.msgs.portLinkStateDown> Port 9 link down
+03/23/2026 18:30:16.28 <Info:vlan.msgs.portLinkStateDown> Port 4 link down
+03/23/2026 18:30:15.93 <Info:vlan.msgs.portLinkStateDown> Port 8 link down
+03/23/2026 18:30:15.52 <Info:vlan.msgs.portLinkStateDown> Port 1 link down
+03/23/2026 18:30:15.43 <Info:vlan.msgs.portLinkStateDown> Port 6 link down
+03/23/2026 18:30:14.31 <Info:vlan.msgs.portLinkStateDown> Port 2 link down
+03/23/2026 18:30:10.00 <Warn:EDP.PortVLANIdCfgMismatch> One or more untagged ports has been determined to have a VLAN configuration mismatch. Use the "show edp port all vlan-id mismatch untagged" command to see detailed information.
+03/23/2026 18:30:03.30 <Info:vlan.msgs.portLinkStateUp> Port 10 link UP at speed 1 Gbps and full-duplex
+03/23/2026 18:30:03.09 <Info:vlan.msgs.portLinkStateUp> Port 9 link UP at speed 1 Gbps and full-duplex
+03/23/2026 18:30:02.75 <Info:vlan.msgs.portLinkStateUp> Port 8 link UP at speed 1 Gbps and full-duplex
+03/23/2026 18:30:02.52 <Info:vlan.msgs.portLinkStateUp> Port 7 link UP at speed 1 Gbps and full-duplex
+03/23/2026 18:30:02.37 <Info:vlan.msgs.portLinkStateUp> Port 3 link UP at speed 1 Gbps and full-duplex
+03/23/2026 18:30:02.26 <Info:vlan.msgs.portLinkStateUp> Port 6 link UP at speed 1 Gbps and full-duplex
+03/23/2026 18:30:02.10 <Info:vlan.msgs.portLinkStateUp> Port 5 link UP at speed 1 Gbps and full-duplex
+03/23/2026 18:30:01.74 <Info:vlan.msgs.portLinkStateUp> Port 4 link UP at speed 1 Gbps and full-duplex
+03/23/2026 18:30:01.30 <Info:vlan.msgs.portLinkStateUp> Port 2 link UP at speed 1 Gbps and full-duplex
+03/23/2026 18:30:00.99 <Info:vlan.msgs.portLinkStateUp> Port 1 link UP at speed 1 Gbps and full-duplex
+03/23/2026 18:29:53.10 <Info:vlan.msgs.portLinkStateDown> Port 13 link down
+03/23/2026 18:29:52.95 <Info:vlan.msgs.portLinkStateDown> Port 12 link down
+03/23/2026 18:29:43.04 <Noti:POE.port_delivering> Port 13 is delivering power
+03/23/2026 18:29:42.93 <Noti:POE.port_delivering> Port 12 is delivering power
+03/23/2026 18:29:42.71 <Noti:POE.port_delivering> Port 10 is delivering power
+03/23/2026 18:29:42.61 <Noti:POE.port_delivering> Port 9 is delivering power
+03/23/2026 18:29:42.51 <Noti:POE.port_delivering> Port 8 is delivering power
+03/23/2026 18:29:42.41 <Noti:POE.port_delivering> Port 7 is delivering power
+03/23/2026 18:29:42.31 <Warn:NetTools.SNTP.SrvrNameNotRslved> Host name 0.aerohive.pool.ntp.org is not DNS resolved yet
+03/23/2026 18:29:42.29 <Noti:POE.port_delivering> Port 6 is delivering power
+03/23/2026 18:29:42.19 <Noti:POE.port_delivering> Port 5 is delivering power
+03/23/2026 18:29:42.09 <Noti:POE.port_delivering> Port 4 is delivering power
+03/23/2026 18:29:41.99 <Noti:POE.port_delivering> Port 3 is delivering power
+03/23/2026 18:29:41.89 <Noti:POE.port_delivering> Port 2 is delivering power
+03/23/2026 18:29:41.78 <Noti:POE.port_delivering> Port 1 is delivering power
+03/23/2026 18:29:41.47 <Info:vlan.msgs.portLinkStateUp> Port 13 link UP at speed 100 Mbps and full-duplex
+03/23/2026 18:29:41.42 <Info:vlan.msgs.portLinkStateUp> Port 12 link UP at speed 100 Mbps and full-duplex
+03/23/2026 18:29:38.26 <Info:HAL.Sys.Info> Power usage monitoring not supported for PSU (Part name Internal Power Supply  ) in slot 1
+03/23/2026 18:29:38.26 <Info:HAL.Sys.Info> Input voltage to Internal Power Supply is on. Output enabled.
+03/23/2026 18:29:38.26 <Info:HAL.Sys.Info> Internal Power Supply is present.
+03/23/2026 18:29:33.65 <Info:vlan.msgs.portLinkStateUp> Port 24 link UP at speed 1 Gbps and full-duplex
+03/23/2026 18:29:32.72 <Info:vlan.msgs.portLinkStateUp> Port 16 link UP at speed 1 Gbps and full-duplex
+03/23/2026 18:29:32.46 <Noti:DM.Notice> Process ztpstack Deleted
+03/23/2026 18:29:30.39 <Info:vlan.dbg.info> Media SX is inserted into Port 24
+03/23/2026 18:29:28.23 <Info:HAL.Card.Info> Switch is operational
+03/23/2026 18:29:27.26 <Warn:NetTools.SNTP.SrvrNameNotRslved> Host name 0.aerohive.pool.ntp.org is not DNS resolved yet
+03/23/2026 18:29:26.48 <Noti:exsshd.CfgHostKeyAlgWeak> The configured host key algorithm(s), ssh-rsa, is/are weaker than what is recommended.
+03/23/2026 18:29:26.25 <Warn:STP.DomainEnable> STP domain s0 enabled
+03/23/2026 18:29:26.22 <Info:AAA.LogSsh> Msg from Master : Existing host key with fingerprint SHA256:c7:96:11:c9:37:dc:be:c3:0e:2d:41:13:29:61:38:9a:0c:c9:25:b4:ae:77:0c:d2:0b:32:b4:ed:15:20:94:da loaded successfully
+03/23/2026 18:29:26.13 <Info:AAA.LogSsh> Msg from Master : Generating RSA-2048 public key
+03/23/2026 18:29:26.04 <Info:AAA.LogSsh> Msg from Master : Loaded Private Key of size 1679 from System
+03/23/2026 18:29:24.49 <Noti:thttpd.CrtfctVld> The provided SSL certificate (CN:*.extremenetworks.com) is valid.
+03/23/2026 18:29:24.47 <Noti:thttpd.CrtfctVld> The provided SSL certificate (CN:*.extremenetworks.com) is valid.
+03/23/2026 18:29:23.26 <Warn:NetTools.SNTP.SrvrNameNotRslved> Host name 0.aerohive.pool.ntp.org is not DNS resolved yet
+03/23/2026 18:29:22.51 <Info:SNMP.Master.InitDone> snmpMaster initialization complete
+03/23/2026 18:29:21.89 <Noti:EPM.system_stable> System is stable. Change to warm reset mode
+03/23/2026 18:29:16.97 <Info:EPM.wdg_enable> Watchdog enabled
+03/23/2026 18:29:13.25 <Info:telnetd.info> **** telnetd started *****
+03/23/2026 18:29:10.16 <Noti:DM.Notice> Node State[3] = OPERATIONAL
+03/23/2026 18:29:08.25 <Info:HAL.Sys.Info> External Power Supply is disconnected.
+03/23/2026 18:29:08.25 <Info:HAL.Sys.Info> Internal Power Supply is disconnected.
+03/23/2026 18:29:08.20 <Info:DOSProt.Init> DOS protect application started successfully
+03/23/2026 18:29:08.13 <Info:EAPS.DmnInfo> EAPSD  - License string updated: basic,master,fast
+03/23/2026 18:29:07.65 <Info:tftpd.info> **** tftpd started *****
+03/23/2026 18:29:06.66 <Noti:DM.Notice> Node State[2] = STANDBY
+03/23/2026 18:29:06.66 <Info:DM.Info> Node INIT DONE ....
+03/23/2026 18:29:05.86 <Noti:DM.Notice> Node State[1] = INIT
+03/23/2026 18:29:05.53 <Info:nl.init> Network Login framework has been initialized
+03/23/2026 18:29:05.25 <Info:HAL.Sys.Info> Hal initialization done.
+03/23/2026 18:29:04.37 <Info:HAL.Sys.Info> External Power Supply is powered off.
+03/23/2026 18:29:04.37 <Info:HAL.Sys.Info> External Power Supply is present.
+03/23/2026 18:29:04.37 <Info:HAL.Sys.Info> Internal Power Supply is powered off.
+03/23/2026 18:29:04.37 <Info:HAL.Sys.Info> Internal Power Supply is present.
+03/23/2026 18:29:04.37 <Noti:HAL.Sys.Notice> Module in fan slot 1 is inserted
+03/23/2026 18:29:04.36 <Info:HAL.Card.Info> Bluetooth capability is not supported
+03/23/2026 18:28:48.01 <Info:HAL.Sys.Info> Starting hal initialization ....
+03/23/2026 18:28:47.54 <Noti:DM.Notice> DM started
+03/23/2026 18:28:47.42 <Noti:licMgr.EnblFeatLcns> Enabled the Edge license product for the Edge feature(s).
+03/23/2026 18:28:46.69 <Noti:log.serverStarted> The Event Management System logging server has started.
+03/23/2026 18:28:44.41 <Noti:NM.StrtProc> The Node Manager (NM) has started processing.
+03/23/2026 18:28:44.28 <Noti:EPM.start> EPM Started
+03/23/2026 18:28:44.27 <Warn:EPM.UnexpctRebootDtect> Booting after System Failure.
+03/23/2026 18:28:43.12 <Noti:EPM.wd_warm_reset> Changing to watchdog warm reset mode
+03/23/2026 18:27:56.34 <Crit:Kern.Critical> EXT4-fs error (device mmcblk0p9): __ext4_new_inode:1123: comm redis-server: failed to insert inode 1243: doubly allocated?
+03/23/2026 18:09:51.83 <Warn:EDP.PortVLANIdCfgMismatch> One or more untagged ports has been determined to have a VLAN configuration mismatch. Use the "show edp port all vlan-id mismatch untagged" command to see detailed information.
+03/23/2026 18:09:44.20 <Warn:NetTools.SNTP.SrvrNameNotRslved> Host name 0.aerohive.pool.ntp.org is not DNS resolved yet
+03/23/2026 18:09:29.17 <Warn:NetTools.SNTP.SrvrNameNotRslved> Host name 0.aerohive.pool.ntp.org is not DNS resolved yet
+03/23/2026 18:09:28.12 <Warn:STP.DomainEnable> STP domain s0 enabled
+03/23/2026 18:09:25.19 <Warn:NetTools.SNTP.SrvrNameNotRslved> Host name 0.aerohive.pool.ntp.org is not DNS resolved yet
+03/23/2026 18:08:46.29 <Warn:EPM.UnexpctRebootDtect> Booting after System Failure.
+03/23/2026 17:50:20.82 <Warn:EDP.PortVLANIdCfgMismatch> One or more untagged ports has been determined to have a VLAN configuration mismatch. Use the "show edp port all vlan-id mismatch untagged" command to see detailed information.
+03/23/2026 17:49:48.24 <Warn:NetTools.SNTP.SrvrNameNotRslved> Host name 0.aerohive.pool.ntp.org is not DNS resolved yet
+03/23/2026 17:49:33.20 <Warn:NetTools.SNTP.SrvrNameNotRslved> Host name 0.aerohive.pool.ntp.org is not DNS resolved yet
+03/23/2026 17:49:31.36 <Warn:STP.DomainEnable> STP domain s0 enabled
+03/23/2026 17:49:29.23 <Warn:NetTools.SNTP.SrvrNameNotRslved> Host name 0.aerohive.pool.ntp.org is not DNS resolved yet
+03/23/2026 17:48:50.27 <Warn:EPM.UnexpctRebootDtect> Booting after System Failure.
+03/23/2026 17:48:02.63 <Crit:Kern.Critical> EXT4-fs error (device mmcblk0p9): __ext4_new_inode:1123: comm redis-server: failed to insert inode 1243: doubly allocated?
+03/23/2026 17:31:50.16 <Warn:SNMP.Master.AuthFail> Login failed through SNMPv1/v2c - bad community name (HAGT-Bbgmq&Wwg8a)
+03/23/2026 17:30:13.98 <Warn:EDP.PortVLANIdCfgMismatch> One or more untagged ports has been determined to have a VLAN configuration mismatch. Use the "show edp port all vlan-id mismatch untagged" command to see detailed information.
+03/23/2026 17:29:50.22 <Warn:NetTools.SNTP.SrvrNameNotRslved> Host name 0.aerohive.pool.ntp.org is not DNS resolved yet
+03/23/2026 17:29:35.20 <Warn:NetTools.SNTP.SrvrNameNotRslved> Host name 0.aerohive.pool.ntp.org is not DNS resolved yet
+03/23/2026 17:29:34.19 <Warn:STP.DomainEnable> STP domain s0 enabled
+03/23/2026 17:29:31.20 <Warn:NetTools.SNTP.SrvrNameNotRslved> Host name 0.aerohive.pool.ntp.org is not DNS resolved yet
+03/23/2026 17:28:52.24 <Warn:EPM.UnexpctRebootDtect> Booting after System Failure.
+03/23/2026 17:28:04.19 <Crit:Kern.Critical> EXT4-fs error (device mmcblk0p9): __ext4_new_inode:1123: comm redis-server: failed to insert inode 1243: doubly allocated?
+03/23/2026 17:11:53.75 <Warn:SNMP.Master.AuthFail> Login failed through SNMPv1/v2c - bad community name (HAGT-z5iZRKSwOfe)
+03/23/2026 17:09:55.81 <Warn:EDP.PortVLANIdCfgMismatch> One or more untagged ports has been determined to have a VLAN configuration mismatch. Use the "show edp port all vlan-id mismatch untagged" command to see detailed information.
+03/23/2026 17:09:53.25 <Warn:NetTools.SNTP.SrvrNameNotRslved> Host name 0.aerohive.pool.ntp.org is not DNS resolved yet
+03/23/2026 17:09:38.24 <Warn:NetTools.SNTP.SrvrNameNotRslved> Host name 0.aerohive.pool.ntp.org is not DNS resolved yet
+03/23/2026 17:09:37.13 <Warn:STP.DomainEnable> STP domain s0 enabled
+03/23/2026 17:09:34.25 <Warn:NetTools.SNTP.SrvrNameNotRslved> Host name 0.aerohive.pool.ntp.org is not DNS resolved yet
+03/23/2026 17:08:55.26 <Warn:EPM.UnexpctRebootDtect> Booting after System Failure.
+03/23/2026 17:08:08.80 <Crit:Kern.Critical> EXT4-fs error (device mmcblk0p9): __ext4_new_inode:1123: comm redis-server: failed to insert inode 1243: doubly allocated?
+03/23/2026 16:49:41.24 <Warn:NetTools.SNTP.SrvrNameNotRslved> Host name 0.aerohive.pool.ntp.org is not DNS resolved yet
+03/23/2026 16:49:38.13 <Warn:EDP.PortVLANIdCfgMismatch> One or more untagged ports has been determined to have a VLAN configuration mismatch. Use the "show edp port all vlan-id mismatch untagged" command to see detailed information.
+03/23/2026 16:49:26.22 <Warn:NetTools.SNTP.SrvrNameNotRslved> Host name 0.aerohive.pool.ntp.org is not DNS resolved yet
+03/23/2026 16:49:25.22 <Warn:STP.DomainEnable> STP domain s0 enabled
+03/23/2026 16:49:22.25 <Warn:NetTools.SNTP.SrvrNameNotRslved> Host name 0.aerohive.pool.ntp.org is not DNS resolved yet
+03/23/2026 16:48:43.29 <Warn:EPM.UnexpctRebootDtect> Booting after System Failure.
+03/23/2026 16:30:18.06 <Warn:EDP.PortVLANIdCfgMismatch> One or more untagged ports has been determined to have a VLAN configuration mismatch. Use the "show edp port all vlan-id mismatch untagged" command to see detailed information.
+03/23/2026 16:29:44.44 <Warn:NetTools.SNTP.SrvrNameNotRslved> Host name 0.aerohive.pool.ntp.org is not DNS resolved yet
+03/23/2026 16:29:29.45 <Warn:NetTools.SNTP.SrvrNameNotRslved> Host name 0.aerohive.pool.ntp.org is not DNS resolved yet
+03/23/2026 16:29:28.31 <Warn:STP.DomainEnable> STP domain s0 enabled
+03/23/2026 16:29:25.44 <Warn:NetTools.SNTP.SrvrNameNotRslved> Host name 0.aerohive.pool.ntp.org is not DNS resolved yet
+03/23/2026 16:28:46.28 <Warn:EPM.UnexpctRebootDtect> Booting after System Failure.
+03/23/2026 16:27:59.82 <Crit:Kern.Critical> EXT4-fs error (device mmcblk0p9): __ext4_new_inode:1123: comm redis-server: failed to insert inode 1243: doubly allocated?
+03/23/2026 16:10:00.39 <Warn:EDP.PortVLANIdCfgMismatch> One or more untagged ports has been determined to have a VLAN configuration mismatch. Use the "show edp port all vlan-id mismatch untagged" command to see detailed information.
+03/23/2026 16:09:45.32 <Warn:NetTools.SNTP.SrvrNameNotRslved> Host name 0.aerohive.pool.ntp.org is not DNS resolved yet
+03/23/2026 16:09:30.31 <Warn:NetTools.SNTP.SrvrNameNotRslved> Host name 0.aerohive.pool.ntp.org is not DNS resolved yet
+03/23/2026 16:09:29.22 <Warn:STP.DomainEnable> STP domain s0 enabled
+03/23/2026 16:09:26.34 <Warn:NetTools.SNTP.SrvrNameNotRslved> Host name 0.aerohive.pool.ntp.org is not DNS resolved yet
+03/23/2026 16:08:47.29 <Warn:EPM.UnexpctRebootDtect> Booting after System Failure.
+03/23/2026 15:49:47.47 <Warn:NetTools.SNTP.SrvrNameNotRslved> Host name 0.aerohive.pool.ntp.org is not DNS resolved yet
+03/23/2026 15:49:42.37 <Warn:EDP.PortVLANIdCfgMismatch> One or more untagged ports has been determined to have a VLAN configuration mismatch. Use the "show edp port all vlan-id mismatch untagged" command to see detailed information.
+03/23/2026 15:49:32.49 <Warn:NetTools.SNTP.SrvrNameNotRslved> Host name 0.aerohive.pool.ntp.org is not DNS resolved yet
+03/23/2026 15:49:31.28 <Warn:STP.DomainEnable> STP domain s0 enabled
+03/23/2026 15:49:28.46 <Warn:NetTools.SNTP.SrvrNameNotRslved> Host name 0.aerohive.pool.ntp.org is not DNS resolved yet
+03/23/2026 15:48:49.19 <Warn:EPM.UnexpctRebootDtect> Booting after System Failure.
+03/23/2026 15:48:02.35 <Crit:Kern.Critical> EXT4-fs error (device mmcblk0p9): __ext4_new_inode:1123: comm redis-server: failed to insert inode 1243: doubly allocated?
+03/23/2026 15:30:21.01 <Warn:EDP.PortVLANIdCfgMismatch> One or more untagged ports has been determined to have a VLAN configuration mismatch. Use the "show edp port all vlan-id mismatch untagged" command to see detailed information.
+03/23/2026 15:29:50.12 <Warn:NetTools.SNTP.SrvrNameNotRslved> Host name 0.aerohive.pool.ntp.org is not DNS resolved yet
+03/23/2026 15:29:35.15 <Warn:NetTools.SNTP.SrvrNameNotRslved> Host name 0.aerohive.pool.ntp.org is not DNS resolved yet
+03/23/2026 15:29:34.15 <Warn:STP.DomainEnable> STP domain s0 enabled
+03/23/2026 15:29:31.12 <Warn:NetTools.SNTP.SrvrNameNotRslved> Host name 0.aerohive.pool.ntp.org is not DNS resolved yet
+03/23/2026 15:28:52.17 <Warn:EPM.UnexpctRebootDtect> Booting after System Failure.
+03/23/2026 15:28:04.19 <Crit:Kern.Critical> EXT4-fs error (device mmcblk0p9): __ext4_new_inode:1123: comm redis-server: failed to insert inode 1243: doubly allocated?
+03/23/2026 15:23:14.55 <Warn:NetTools.SNTP.SrvrNameNotRslved> Host name 0.aerohive.pool.ntp.org is not DNS resolved yet
+03/23/2026 15:21:44.53 <Warn:NetTools.SNTP.SrvrNameNotRslved> Previous message repeated 6 additional times in the last 75 second(s)
+03/23/2026 15:10:42.86 <Warn:EDP.PortVLANIdCfgMismatch> One or more untagged ports has been determined to have a VLAN configuration mismatch. Use the "show edp port all vlan-id mismatch untagged" command to see detailed information.
+03/23/2026 15:10:14.54 <Warn:NetTools.SNTP.SrvrNameNotRslved> Host name 0.aerohive.pool.ntp.org is not DNS resolved yet
+03/23/2026 15:09:59.54 <Warn:NetTools.SNTP.SrvrNameNotRslved> Host name 0.aerohive.pool.ntp.org is not DNS resolved yet
+03/23/2026 15:09:58.21 <Warn:STP.DomainEnable> STP domain s0 enabled
+03/23/2026 15:09:55.50 <Warn:NetTools.SNTP.SrvrNameNotRslved> Host name 0.aerohive.pool.ntp.org is not DNS resolved yet
+03/23/2026 15:09:16.28 <Warn:EPM.UnexpctRebootDtect> Booting after System Failure.
+
+A total of 185 log messages were displayed.
+* E7.4 # 
+* E7.4 #

@@ -52,8 +52,10 @@ class CaptureController extends Controller
         $created = 0;
         $skipped = [];
 
+        $analysisType = $request->string('analysis_type', 'tech_support')->toString();
+
         foreach ($request->file('files', []) as $file) {
-            $result = $this->storeOne($client, $file);
+            $result = $this->storeOne($client, $file, $analysisType);
             if ($result === true) {
                 $created++;
             } else {
@@ -75,7 +77,7 @@ class CaptureController extends Controller
     }
 
     /** @return true|string true si se creó; mensaje si se omitió */
-    private function storeOne(Client $client, UploadedFile $file): true|string
+    private function storeOne(Client $client, UploadedFile $file, string $analysisType = 'tech_support'): true|string
     {
         $name = $file->getClientOriginalName();
 
@@ -99,6 +101,7 @@ class CaptureController extends Controller
 
         $capture = Capture::create([
             'client_id' => $client->id,
+            'analysis_type' => $analysisType,
             'uploaded_by' => auth()->id(),
             'uploaded_at' => now(),
             'original_filename' => $name,

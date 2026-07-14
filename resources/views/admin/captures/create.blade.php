@@ -3,7 +3,8 @@
     ['name' => 'Capturas', 'href' => route('admin.captures.index')],
     ['name' => 'Subir archivos'],
 ]">
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 max-w-3xl">
+    <div class="grid gap-4 xl:grid-cols-2 items-start">
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
 
         @if ($errors->any())
             <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-700 dark:text-red-400" role="alert">
@@ -31,8 +32,28 @@
                 </select>
             </div>
 
+            <div class="mb-5">
+                <label for="analysis_type" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                    Tipo de análisis <span class="text-red-500">*</span>
+                </label>
+                <select id="analysis_type" name="analysis_type" required
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                    <option value="tech_support" @selected(old('analysis_type', 'tech_support') === 'tech_support')>
+                        Tech-support completo (show tech-support all)
+                    </option>
+                    <option value="log" @selected(old('analysis_type') === 'log')>
+                        Solo log del equipo (show log)
+                    </option>
+                </select>
+                <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                    El análisis de solo log detecta reinicios inesperados, errores, flapping, puertos a
+                    10 Mbps, conflictos de óptica y logins fallidos. Consulta el panel
+                    "Cómo preparar el archivo de log" para incluir los datos del equipo.
+                </p>
+            </div>
+
             <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                Archivos tech-support (.txt / .log) <span class="text-red-500">*</span>
+                Archivos (.txt / .log) <span class="text-red-500">*</span>
             </label>
             <div id="dropzone"
                 class="flex flex-col items-center justify-center w-full h-48 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 dark:bg-gray-700 dark:border-gray-600 dark:hover:bg-gray-600 transition-colors">
@@ -62,6 +83,45 @@
                 </a>
             </div>
         </form>
+    </div>
+
+    {{-- Guía para preparar el archivo de log con identificación del equipo --}}
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 border-l-4 border-teal-500">
+        <h3 class="text-base font-semibold text-gray-900 dark:text-white mb-2">
+            Cómo preparar el archivo de log (con datos del equipo)
+        </h3>
+        <p class="text-sm text-gray-600 dark:text-gray-300 mb-3">
+            Un archivo de <b>solo log</b> no incluye la identificación del switch. Para que el análisis
+            también extraiga <b>número de serie, modelo, MAC, versión EXOS y si es stack</b> — y el
+            equipo quede registrado automáticamente — ejecuta en el switch
+            <code class="font-mono text-teal-700 dark:text-teal-400">show switch</code> y
+            <code class="font-mono text-teal-700 dark:text-teal-400">show version</code>, y pega sus
+            salidas al inicio del archivo, cada una precedida por su línea marcadora
+            <code class="font-mono">-&gt;comando</code>:
+        </p>
+
+        <pre class="p-3 bg-gray-900 text-gray-100 rounded-lg text-xs overflow-x-auto font-mono leading-relaxed">-&gt;show switch
+SysName:          SW-E7
+System Type:      X620-16x
+System MAC:       00:04:96:xx:xx:xx
+Boot Count:       12
+Current Time:     Mon Mar 23 18:45:00 2026
+(...resto de la salida de show switch)
+-&gt;show version
+Switch : 800600-00-01 <b>2222X-11111</b> Rev 1 BootROM: 1.0.0.1 IMG: 31.7.2.28
+Image  : ExtremeXOS version 31.7.2.28 by release-manager
+         on Wed May 10 10:00:00 EDT 2023
+-&gt;show log
+03/23/2026 18:42:43.69 &lt;Info:AAA.LogSsh&gt; Msg from Master...
+(...el log completo del equipo)</pre>
+
+        <ul class="mt-3 space-y-1 text-xs text-gray-600 dark:text-gray-300 list-disc ps-4">
+            <li>Las líneas <code class="font-mono">-&gt;show switch</code>, <code class="font-mono">-&gt;show version</code> y <code class="font-mono">-&gt;show log</code> son los separadores: escríbelas tal cual (con el prefijo <code class="font-mono">-&gt;</code>).</li>
+            <li>De <code class="font-mono">show switch</code> se obtienen: nombre, modelo, MAC (identifica al equipo), stack/standalone, uptime y la <b>fecha de la captura</b> (Current Time).</li>
+            <li>De <code class="font-mono">show version</code>: <b>número de serie</b> (por slot si es stack), versión EXOS y fecha del firmware.</li>
+            <li>Si subes el log sin encabezados, el análisis funciona igual pero la captura no se asocia a un equipo.</li>
+        </ul>
+    </div>
     </div>
 
     @push('js')

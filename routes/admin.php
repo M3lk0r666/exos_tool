@@ -36,6 +36,11 @@ Route::get('reports/{report}/pdf', [ReportController::class, 'pdf'])->name('repo
 Route::get('methodology', [\App\Http\Controllers\Admin\MethodologyController::class, 'show'])->name('methodology');
 Route::get('methodology/pdf', [\App\Http\Controllers\Admin\MethodologyController::class, 'pdf'])->name('methodology.pdf');
 
+// Gestión de usuarios (solo admin)
+Route::resource('users', \App\Http\Controllers\Admin\UserController::class)
+    ->except(['show'])
+    ->parameters(['users' => 'user']);
+
 // Administración (Fase 7)
 Route::get('rules', [\App\Http\Controllers\Admin\AnalyzerRuleController::class, 'index'])->name('rules.index');
 Route::put('rules/{rule}', [\App\Http\Controllers\Admin\AnalyzerRuleController::class, 'update'])->name('rules.update');

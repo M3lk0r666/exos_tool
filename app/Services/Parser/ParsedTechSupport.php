@@ -57,6 +57,9 @@ class ParsedTechSupport
     /** @var array<string, string> Estado por FanTray (Operational/Empty/Failed...) */
     public array $fanTrays = [];
 
+    /** @var array<string, array{state: ?string, fans: array<int, array{fan: string, state: string, rpm: ?int}>}> */
+    public array $fanDetails = [];
+
     // Alimentación
     public int $psuOn = 0;
     public int $psuFailed = 0;
@@ -153,7 +156,7 @@ class ParsedTechSupport
             'slots' => $this->slots,
             'odometer_days' => $this->odometerDays,
             'temperatures' => $this->temperatures,
-            'fans' => ['ok' => $this->fansOk, 'failed' => $this->fansFailed, 'trays' => $this->fanTrays],
+            'fans' => ['ok' => $this->fansOk, 'failed' => $this->fansFailed, 'trays' => $this->fanTrays, 'detail' => $this->fanDetails],
             'power' => ['on' => $this->psuOn, 'failed' => $this->psuFailed, 'empty' => $this->psuEmpty, 'usage_w' => $this->powerUsageWatts],
             'cpu_1h' => $this->cpuSystem1h,
             'cpu_high_processes' => $this->cpuHighProcesses,

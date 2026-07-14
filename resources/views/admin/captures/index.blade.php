@@ -42,6 +42,7 @@
                     <tr>
                         <th scope="col" class="px-4 py-3">#</th>
                         <th scope="col" class="px-4 py-3">Archivo</th>
+                        <th scope="col" class="px-4 py-3">Tipo</th>
                         <th scope="col" class="px-4 py-3">Cliente</th>
                         <th scope="col" class="px-4 py-3">Equipo</th>
                         <th scope="col" class="px-4 py-3">Fecha de captura</th>
@@ -59,6 +60,14 @@
                                     {{ Str::limit($capture->original_filename, 40) }}
                                 </a>
                                 <div class="text-xs text-gray-400">{{ number_format($capture->file_size / 1024) }} KB</div>
+                            </td>
+                            <td class="px-4 py-3">
+                                <span class="text-xs font-medium px-2 py-0.5 rounded-full
+                                    {{ $capture->isLogAnalysis()
+                                        ? 'bg-teal-100 text-teal-800 dark:bg-teal-900 dark:text-teal-300'
+                                        : 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300' }}">
+                                    {{ $capture->analysisTypeLabel() }}
+                                </span>
                             </td>
                             <td class="px-4 py-3">{{ $capture->client?->name ?? '—' }}</td>
                             <td class="px-4 py-3">{{ $capture->device?->displayName() ?? '—' }}</td>
@@ -89,7 +98,7 @@
                         </tr>
                     @empty
                         <tr class="bg-white dark:bg-gray-800">
-                            <td colspan="7" class="px-6 py-8 text-center text-gray-400">
+                            <td colspan="8" class="px-6 py-8 text-center text-gray-400">
                                 No hay capturas registradas. Sube un archivo tech-support para comenzar.
                             </td>
                         </tr>

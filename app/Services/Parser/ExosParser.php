@@ -50,9 +50,17 @@ class ExosParser
     /** @var array<string, string> */
     private array $sections = [];
 
-    public function parse(string $text): ParsedTechSupport
+    public function parse(string $text, string $type = 'tech_support'): ParsedTechSupport
     {
         $this->sections = $this->splitter->split($text);
+
+        // Modo log: si el archivo incluye encabezados de identificación
+        // (->show switch / ->show version pegados antes del log), se procesa
+        // con el flujo completo para extraer serie, modelo, versión y stack.
+        // Si es log puro, se analiza solo el registro de eventos.
+        if ($type === 'log' && ! $this->hasIdentitySections()) {
+            return $this->parseLogOnly($text);
+        }
         $result = new ParsedTechSupport;
 
         if ($this->sections === []) {
@@ -92,6 +100,44 @@ class ExosParser
                 $result->addWarning("Sección [{$label}]: {$e->getMessage()}");
             }
         }
+
+        return $result;
+    }
+
+    /** ¿El archivo trae secciones de identificación del equipo? */
+    private function hasIdentitySections(): bool
+    {
+        foreach (array_keys($this->sections) as $command) {
+            if (str_starts_with($command, 'show switch') || str_starts_with($command, 'show version')) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Análisis de archivos de solo log (salida de "show log"): reutiliza el
+     * extractor de eventos tratando el archivo completo como esa sección.
+     * No hay identificación del equipo, por lo que la captura no se asocia
+     * automáticamente a un device.
+     */
+    private function parseLogOnly(string $text): ParsedTechSupport
+    {
+        $this->sections = ['show log' => $text];
+        $result = new ParsedTechSupport;
+
+        try {
+            $this->extractLogs($result);
+        } catch (Throwable $e) {
+            $result->addWarning('Sección [show log]: '.$e->getMessage());
+        }
+
+        if ($result->logTotal === 0) {
+            $result->addWarning('No se encontraron eventos con formato de log EXOS (MM/DD/YYYY HH:MM:SS <Sev:Componente> mensaje).');
+        }
+
+        $result->addWarning('Análisis de solo log: no incluye identificación del equipo, ambiente, puertos ni configuración.');
 
         return $result;
     }
@@ -168,7 +214,20 @@ class ExosParser
 
     private function extractVersion(ParsedTechSupport $r): void
     {
-        $ver = $this->section('version');
+        // Los seriales pueden venir en "show version" o en "show version detail"
+        // según la versión de EXOS: se combinan todas las secciones de versión.
+        $ver = '';
+        foreach ($this->sections as $command => $content) {
+            if (str_starts_with($command, 'show version')
+                && ! str_starts_with($command, 'show version images')
+                && ! str_starts_with($command, 'show version process')) {
+                $ver .= $content."\n";
+            }
+        }
+        if ($ver === '') {
+            $ver = $this->section('version');
+        }
+
         $sw = $this->section('switch');
 
         // Versión: primero de "Image : ExtremeXOS version X", si no de Primary ver.
@@ -278,6 +337,29 @@ class ExosParser
             foreach ($ms as $m) {
                 $label = trim($m[1].$m[2]);
                 $r->fanTrays[$label] = $m[3];
+            }
+        }
+
+        // Detalle por ventilador (show fans / show fans detail): tray -> fans con RPM.
+        $currentTray = null;
+        foreach (preg_split('/\r\n|\r|\n/', $fans) as $line) {
+            if (preg_match('/^(.*?)(FanTray(?:-\d+)?) information:/', $line, $m)) {
+                $currentTray = trim($m[1].$m[2]);
+                $r->fanDetails[$currentTray] = [
+                    'state' => $r->fanTrays[$currentTray] ?? null,
+                    'fans' => [],
+                ];
+
+                continue;
+            }
+
+            if ($currentTray !== null
+                && preg_match('/(Fan-\d+):\s+(\S+)(?:\s+at\s+(\d+)\s+RPM)?/', $line, $m)) {
+                $r->fanDetails[$currentTray]['fans'][] = [
+                    'fan' => $m[1],
+                    'state' => $m[2],
+                    'rpm' => isset($m[3]) && $m[3] !== '' ? (int) $m[3] : null,
+                ];
             }
         }
     }

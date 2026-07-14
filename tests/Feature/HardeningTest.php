@@ -41,6 +41,7 @@ class HardeningTest extends TestCase
 
         $this->actingAs($engineer)->post(route('admin.captures.store'), [
             'client_id' => $client->id,
+            'analysis_type' => 'tech_support',
             'files' => [UploadedFile::fake()->createWithContent('ts.txt', $content)],
         ])->assertSessionHas('success');
 
@@ -115,6 +116,7 @@ class HardeningTest extends TestCase
 
         $response = $this->actingAs($engineer)->post(route('admin.captures.store'), [
             'client_id' => $client->id,
+            'analysis_type' => 'tech_support',
             'files' => [UploadedFile::fake()->create('grande.txt', 2048)], // 2 MB > 1 MB
         ]);
 
