@@ -151,8 +151,12 @@
                     <div class="font-medium text-gray-900 dark:text-white">{{ $summary['logs']['total'] ?? 0 }} eventos</div>
                     <div class="text-xs text-gray-400">
                         Errores: {{ $summary['logs']['errors'] ?? 0 }} ·
+                        Warnings: {{ $summary['logs']['warnings'] ?? 0 }} ·
                         Reinicios inesperados: {{ count($summary['logs']['unexpected_reboots'] ?? []) }} ·
                         Logins fallidos: {{ $summary['logs']['auth_failures'] ?? 0 }}
+                        @foreach ($summary['logs']['cpu_warnings'] ?? [] as $proc => $cw)
+                            <br><span class="text-red-500 font-medium">CPU: {{ $proc }} hasta {{ $cw['max_pct'] }}% (x{{ $cw['count'] }})</span>
+                        @endforeach
                     </div>
                 </div>
                 <div class="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
@@ -199,8 +203,22 @@
                 </div>
             </div>
 
+            @php([$logFindings, $currentFindings] = $findings->partition(fn ($f) => $f->isLogBased()))
+
+            @foreach ([
+                ['Estado actual del equipo (tech-support)', $currentFindings, 'Condiciones presentes al momento de la captura.',
+                    'border-blue-600 bg-blue-50 text-blue-900 dark:bg-blue-900/30 dark:text-blue-200'],
+                ['Histórico del equipo (show log / NVRAM)', $logFindings, 'Eventos ocurridos en el periodo del log: aunque el estado actual sea normal, aquí queda lo que pasó y sobre lo que se puede tomar acción.',
+                    'border-teal-600 bg-teal-50 text-teal-900 dark:bg-teal-900/30 dark:text-teal-200'],
+            ] as [$sectionTitle, $sectionFindings, $sectionNote, $sectionClasses])
+            @continue($sectionFindings->isEmpty())
+            <div class="mb-5">
+            <div class="border-l-4 rounded-lg p-3 mb-3 {{ $sectionClasses }}">
+                <div class="text-lg font-bold">{{ $sectionTitle }} ({{ $sectionFindings->count() }})</div>
+                <p class="text-xs opacity-80 mt-0.5">{{ $sectionNote }}</p>
+            </div>
             <div class="space-y-3">
-                @foreach ($findings as $finding)
+                @foreach ($sectionFindings as $finding)
                     <details class="border border-gray-200 dark:border-gray-700 rounded-lg">
                         <summary class="flex items-center gap-3 p-3 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg">
                             <span class="text-xs font-medium px-2.5 py-0.5 rounded-full shrink-0 {{ $finding->level->badgeClasses() }}">
@@ -229,6 +247,8 @@
                     </details>
                 @endforeach
             </div>
+            </div>
+            @endforeach
         </div>
     @endif
 

@@ -255,12 +255,27 @@ class ExosParser
         //   Switch  : 800618-00-18 1910N-44546 Rev 18 BootROM: ...  (standalone)
         //   Slot-1  : 800324-00-09 1233G-80233 Rev 9.0 BootROM: ... (stack)
         // Primer bloque = número de parte; segundo = número de serie.
-        if (preg_match_all('/^(Switch|Slot-\d+)\s*:\s*(\S+)\s+(\S+)\s+Rev/m', $ver, $ms, PREG_SET_ORDER)) {
+        if (preg_match_all('/^\*?\s*(Switch|Slot-\d+)\s*:\s*(\S+)\s+(\S+)\s+Rev/m', $ver, $ms, PREG_SET_ORDER)) {
             foreach ($ms as $m) {
                 $r->partNumbers[$m[1]] = $m[2];
                 $r->serialNumbers[$m[1]] = $m[3];
             }
         }
+
+        // Fallback para líneas sin "Rev" o con formato variante: se ancla al
+        // número de parte (patrón 8xxxxx-xx-xx) y toma el token siguiente
+        // como serial, solo para unidades aún no capturadas.
+        if (preg_match_all('/^\*?\s*(Switch|Slot-\d+)\s*:\s*(\d{6}-\d{2}-\d{2})\s+([A-Za-z0-9-]{6,})/m', $ver, $ms, PREG_SET_ORDER)) {
+            foreach ($ms as $m) {
+                if (! isset($r->serialNumbers[$m[1]])) {
+                    $r->partNumbers[$m[1]] = $m[2];
+                    $r->serialNumbers[$m[1]] = $m[3];
+                }
+            }
+        }
+
+        ksort($r->serialNumbers, SORT_NATURAL);
+        ksort($r->partNumbers, SORT_NATURAL);
 
         if ($r->serialNumbers === []) {
             $r->addWarning('No se pudieron extraer números de serie de "show version".');
@@ -300,7 +315,9 @@ class ExosParser
 
         // Formatos: "Switch : X440G2-48p-10G4 61.50 Normal 0 10-100 110"
         //           "Slot-1 : X460-48p 25.00 Normal -10 0-40 55"
-        if (preg_match_all('/^\s*(\S+)\s*:\s*(\S+)\s+([\d.]+)\s+(\w+)\s+(-?\d+)\s+\S+\s+(\d+)\s*$/m', $temp, $ms, PREG_SET_ORDER)) {
+        // La columna "Normal" (p. ej. 10-100) es el rango normal DEL MODELO
+        // según el propio equipo; "Max" es el límite de apagado térmico.
+        if (preg_match_all('/^\s*(\S+)\s*:\s*(\S+)\s+([\d.]+)\s+(\w+)\s+(-?\d+)\s+(?:(-?\d+)-(-?\d+)|\S+)\s+(\d+)\s*$/m', $temp, $ms, PREG_SET_ORDER)) {
             foreach ($ms as $m) {
                 $r->temperatures[] = [
                     'unit' => $m[1],
@@ -308,7 +325,9 @@ class ExosParser
                     'temp' => (float) $m[3],
                     'status' => $m[4],
                     'min' => (float) $m[5],
-                    'max' => (float) $m[6],
+                    'normal_min' => $m[6] !== '' ? (float) $m[6] : null,
+                    'normal_max' => $m[7] !== '' ? (float) $m[7] : null,
+                    'max' => (float) $m[8],
                 ];
             }
         }
@@ -559,10 +578,38 @@ class ExosParser
 
         $reboots = [];
         $errors = [];
+        $warnings = [];
         $conflicts = [];
+
+        $perDay = [];
 
         foreach ($events as $e) {
             [, $date, $severity, $component, , $message] = $e;
+
+            $perDay[$date] = ($perDay[$date] ?? 0) + 1;
+
+            if ($severity === 'Warn') {
+                $wkey = "{$component}|{$message}";
+                if (! isset($warnings[$wkey]) && count($warnings) < 200) {
+                    $warnings[$wkey] = ['date' => $date, 'component' => $component, 'message' => $message, 'count' => 0];
+                }
+                if (isset($warnings[$wkey])) {
+                    $warnings[$wkey]['count']++;
+                }
+
+                // Monitor de CPU del propio EXOS: <Warn:EPM.cpu> process X consumes N % CPU
+                if (str_contains($component, 'EPM.cpu')
+                    && preg_match('/process\s+(\S+)\s+consumes\s+(\d+)\s*%\s*CPU/i', $message, $cm)) {
+                    $proc = $cm[1];
+                    $pct = (int) $cm[2];
+                    $prev = $r->cpuLogWarnings[$proc] ?? ['max_pct' => 0, 'count' => 0, 'last_date' => $date];
+                    $r->cpuLogWarnings[$proc] = [
+                        'max_pct' => max($prev['max_pct'], $pct),
+                        'count' => $prev['count'] + 1,
+                        'last_date' => $date,
+                    ];
+                }
+            }
 
             if (str_contains($component, 'UnexpctRebootDtect')) {
                 $reboots[$date] = true;
@@ -598,8 +645,13 @@ class ExosParser
         }
 
         $r->unexpectedReboots = array_keys($reboots);
-        usort($r->unexpectedReboots, fn ($a, $b) => strtotime(str_replace('/', '-', $a)) <=> strtotime(str_replace('/', '-', $b)));
+        $mdyTs = fn (string $d) => \DateTime::createFromFormat('m/d/Y', $d) ?: null;
+        usort($r->unexpectedReboots, fn ($a, $b) => ($mdyTs($a)?->getTimestamp() ?? 0) <=> ($mdyTs($b)?->getTimestamp() ?? 0));
         $r->logErrors = array_values($errors);
+        $r->logWarnings = array_values($warnings);
+
+        uksort($perDay, fn ($a, $b) => ($mdyTs($a)?->getTimestamp() ?? 0) <=> ($mdyTs($b)?->getTimestamp() ?? 0));
+        $r->logEventsPerDay = $perDay;
         $r->opticConflicts = array_keys($conflicts);
         sort($r->portsAt10Mbps, SORT_NATURAL);
     }

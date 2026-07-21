@@ -70,6 +70,9 @@ class ExosParserTest extends TestCase
         $this->assertSame(61.5, $p->temperatures[0]['temp']);
         $this->assertSame('Normal', $p->temperatures[0]['status']);
         $this->assertSame(110.0, $p->temperatures[0]['max']);
+        // Rango normal del modelo (columna "Normal": 10-100)
+        $this->assertSame(100.0, $p->temperatures[0]['normal_max']);
+        $this->assertSame(10.0, $p->temperatures[0]['normal_min']);
 
         $this->assertSame(4, $p->fansOk);
         $this->assertSame([], $p->fansFailed);
@@ -179,6 +182,7 @@ class ExosParserTest extends TestCase
         $this->assertCount(4, $p->temperatures);
         $this->assertSame(26.5, $p->temperatures[3]['temp']);
         $this->assertSame(55.0, $p->temperatures[0]['max']);
+        $this->assertSame(40.0, $p->temperatures[0]['normal_max']); // rango 0-40 del X460
 
         // Bloque "!  show fans" agregado manualmente (tercer delimitador)
         $this->assertSame(16, $p->fansOk);

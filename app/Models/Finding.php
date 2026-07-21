@@ -11,6 +11,18 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Finding extends Model
 {
+    /** Reglas cuyo origen es el registro histórico (show log / NVRAM). */
+    public const LOG_RULES = [
+        'SYS-REBOOT', 'LOG-ERR', 'LOG-WARN', 'LOG-CPU', 'LOG-FLAP',
+        'SYS-CORE', 'SEC-AUTH', 'OPT-CFG', 'PORT-10M', 'CORR-ELEC',
+    ];
+
+    /** ¿El hallazgo proviene del histórico del log y no del estado actual? */
+    public function isLogBased(): bool
+    {
+        return in_array($this->rule_code, self::LOG_RULES, true);
+    }
+
     /** @use HasFactory<\Database\Factories\FindingFactory> */
     use HasFactory;
 

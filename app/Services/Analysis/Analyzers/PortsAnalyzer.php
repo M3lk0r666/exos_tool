@@ -105,6 +105,34 @@ class PortsAnalyzer implements AnalyzerInterface
             }
         }
 
+        // --- Flapping observado en el log (LOG-FLAP) ---
+        // Complementa PORT-FLAP: detecta inestabilidad registrada en el log
+        // aunque el estado/contador actual esté OK o la sección de puertos
+        // no exista (capturas de solo log, EXOS 12.x).
+        if ($rule = $ctx->rule('LOG-FLAP')) {
+            foreach ($p->linkDownEvents as $port => $downs) {
+                if ($level = $ctx->severityFor($rule, $downs)) {
+                    $evidence = $ctx->findEvidence("portLinkStateDown> Port {$port} ")
+                        ?? $ctx->findEvidenceRegex('/portLinkStateDown>.*Port '.preg_quote((string) $port, '/').'\b/');
+                    $findings[] = new FindingData(
+                        ruleCode: 'LOG-FLAP',
+                        level: $level,
+                        area: 'ports',
+                        entity: (string) $port,
+                        title: "Puerto {$port} con ".number_format($downs).' caídas de link registradas en el log',
+                        description: 'El log registra '.number_format($downs)." eventos de caída de link del puerto {$port} ".
+                            'en el periodo cubierto por el buffer. Aunque el estado actual del puerto sea normal, esta '.
+                            'inestabilidad ocurrió y pudo causar afectaciones en ese lapso.',
+                        impact: 'Microcortes y reconvergencias durante el periodo del log; posible causa de incidentes ya reportados.',
+                        recommendation: 'Correlacionar las fechas de los eventos con los incidentes reportados; verificar '.
+                            'cable, óptica y equipo remoto del puerto en ventana de mantenimiento.',
+                        evidence: $evidence['text'] ?? null,
+                        fileLocation: $evidence ? 'línea '.$evidence['line'].' (show log)' : 'show log',
+                    );
+                }
+            }
+        }
+
         // --- Puertos que negociaron a 10 Mbps ---
         if (($rule = $ctx->rule('PORT-10M')) && $p->portsAt10Mbps !== []) {
             foreach ($p->portsAt10Mbps as $port) {

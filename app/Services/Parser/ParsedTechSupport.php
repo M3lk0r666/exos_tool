@@ -97,6 +97,15 @@ class ParsedTechSupport
     public array $unexpectedReboots = [];
     /** @var array<int, array{date: string, severity: string, component: string, message: string, count: int}> */
     public array $logErrors = [];
+
+    /** @var array<int, array{date: string, component: string, message: string, count: int}> Eventos Warn agrupados */
+    public array $logWarnings = [];
+
+    /** @var array<string, array{max_pct: int, count: int, last_date: string}> Alertas EPM.cpu por proceso */
+    public array $cpuLogWarnings = [];
+
+    /** @var array<string, int> Eventos del log por fecha (m/d/Y => total), orden cronológico */
+    public array $logEventsPerDay = [];
     /** @var array<int, string> Mensajes de conflicto de óptica */
     public array $opticConflicts = [];
     public int $authFailures = 0;
@@ -173,6 +182,9 @@ class ParsedTechSupport
                 'total' => $this->logTotal,
                 'unexpected_reboots' => $this->unexpectedReboots,
                 'errors' => count($this->logErrors),
+                'warnings' => array_sum(array_column($this->logWarnings, 'count')),
+                'cpu_warnings' => $this->cpuLogWarnings,
+                'per_day' => $this->logEventsPerDay,
                 'auth_failures' => $this->authFailures,
                 'optic_conflicts' => count($this->opticConflicts),
             ],

@@ -1,5 +1,8 @@
 {{-- Hallazgo del reporte: visible siempre, editable en borrador --}}
-<details class="border border-gray-200 dark:border-gray-700 rounded-lg" id="finding-{{ $finding->id }}">
+<details class="border rounded-lg border-l-4 {{ $finding->isLogBased()
+        ? 'border-gray-200 dark:border-gray-700 border-l-teal-500'
+        : 'border-gray-200 dark:border-gray-700 border-l-blue-500' }}"
+    id="finding-{{ $finding->id }}">
     <summary class="flex items-center gap-3 p-3 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg">
         <span class="text-xs font-medium px-2.5 py-0.5 rounded-full shrink-0 {{ $finding->level->badgeClasses() }}">
             {{ $finding->level->label() }}
@@ -7,6 +10,10 @@
         <span class="text-sm font-medium text-gray-900 dark:text-white">{{ $finding->title }}</span>
         @if ($finding->is_manual)
             <span class="text-xs px-2 py-0.5 rounded-full bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300 shrink-0">Manual</span>
+        @endif
+        @if ($finding->isLogBased())
+            <span class="text-xs px-2 py-0.5 rounded-full bg-teal-100 text-teal-800 dark:bg-teal-900 dark:text-teal-300 shrink-0"
+                title="Proviene del histórico del log (show log / NVRAM): ocurrió en el periodo registrado aunque el estado actual sea normal">Histórico</span>
         @endif
         @if ($finding->status !== App\Enums\FindingStatus::Open)
             <span class="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300 shrink-0">

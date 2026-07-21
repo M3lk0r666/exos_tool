@@ -72,8 +72,10 @@
     <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 mb-4">
         <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">Estado por área</h3>
         <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2">
-            @foreach ($areas as $area)
-                <div class="border rounded-lg p-3 text-center {{ App\Services\Reporting\AreaStatusService::cardClasses($area['status']) }}">
+            @foreach ($areas as $areaKey => $area)
+                <a @if ($area['count'] > 0) href="#area-{{ $areaKey }}" @endif
+                    class="block border rounded-lg p-3 text-center {{ App\Services\Reporting\AreaStatusService::cardClasses($area['status']) }} {{ $area['count'] > 0 ? 'hover:ring-2 hover:ring-blue-400 cursor-pointer' : 'cursor-default' }}"
+                    @if ($area['count'] > 0) title="Ir a los hallazgos de {{ $area['label'] }}" @endif>
                     <div class="text-sm font-semibold">{{ $area['label'] }}</div>
                     <div class="text-xs mt-1">
                         @if ($area['count'] === 0)
@@ -82,7 +84,7 @@
                             {{ $area['count'] }} hallazgo(s) · peor: {{ $area['worst']->label() }}
                         @endif
                     </div>
-                </div>
+                </a>
             @endforeach
         </div>
 
@@ -110,18 +112,21 @@
                                     <th class="px-3 py-2">Unidad</th>
                                     <th class="px-3 py-2">Actual</th>
                                     <th class="px-3 py-2">Estado</th>
-                                    <th class="px-3 py-2">Máx. fábrica</th>
-                                    <th class="px-3 py-2">Margen</th>
+                                    <th class="px-3 py-2">Rango normal (modelo)</th>
+                                    <th class="px-3 py-2">Apagado (Max)</th>
+                                    <th class="px-3 py-2">Margen a normal</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach ($temps as $t)
+                                    @php($nmax = $t['normal_max'] ?? $t['max'])
                                     <tr class="border-t border-gray-100 dark:border-gray-700">
                                         <td class="px-3 py-2 font-medium text-gray-900 dark:text-white">{{ $t['unit'] }}</td>
                                         <td class="px-3 py-2">{{ $t['temp'] }} °C</td>
                                         <td class="px-3 py-2 {{ $t['status'] === 'Normal' ? 'text-green-600' : 'text-red-600 font-bold' }}">{{ $t['status'] }}</td>
+                                        <td class="px-3 py-2">{{ isset($t['normal_min']) && $t['normal_min'] !== null ? $t['normal_min'].'–'.$t['normal_max'].' °C' : '—' }}</td>
                                         <td class="px-3 py-2">{{ $t['max'] }} °C</td>
-                                        <td class="px-3 py-2">{{ round($t['max'] - $t['temp'], 1) }} °C</td>
+                                        <td class="px-3 py-2">{{ round($nmax - $t['temp'], 1) }} °C</td>
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -166,42 +171,64 @@
     </div>
 
     {{-- Secciones editables (WYSIWYG) --}}
-    <form method="POST" action="{{ route('admin.reports.update', $report) }}" class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 mb-4">
-        @csrf
-        @method('PUT')
+    <details class="bg-white dark:bg-gray-800 rounded-lg shadow-sm mb-4 group">
+        <summary class="flex items-center gap-3 p-4 cursor-pointer select-none hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Contenido del reporte</h3>
+            <span class="text-xs text-gray-400">Resumen ejecutivo, conclusiones y recomendaciones</span>
+            <svg class="ms-auto w-4 h-4 text-gray-400 transition-transform group-open:rotate-180" fill="none" viewBox="0 0 10 6">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
+            </svg>
+        </summary>
 
-        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">Contenido del reporte</h3>
+        <form method="POST" action="{{ route('admin.reports.update', $report) }}" class="p-4 pt-0">
+            @csrf
+            @method('PUT')
 
-        @foreach (['executive_summary' => 'Resumen ejecutivo', 'conclusions' => 'Conclusiones', 'recommendations' => 'Recomendaciones'] as $field => $label)
-            <div class="mb-5">
-                <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">{{ $label }}</label>
-                @if ($canEdit)
-                    {{-- Quill local: el div es el editor; el textarea oculto lleva el HTML al servidor --}}
-                    <textarea id="{{ $field }}" name="{{ $field }}" class="hidden">{{ old($field, $report->{$field}) }}</textarea>
-                    <div class="quill-editor bg-white dark:bg-gray-700 rounded-b-lg" data-target="{{ $field }}"
-                        style="min-height: 180px;"></div>
-                @else
-                    <div class="prose prose-sm dark:prose-invert max-w-none p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                        {!! $report->{$field} ?: '<span class="text-gray-400">Sin contenido.</span>' !!}
+            @foreach (['executive_summary' => 'Resumen ejecutivo', 'conclusions' => 'Conclusiones', 'recommendations' => 'Recomendaciones'] as $field => $label)
+                <div class="mb-4 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+                    <div class="px-4 py-2 bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600 text-sm font-semibold text-gray-900 dark:text-white">
+                        {{ $label }}
                     </div>
-                @endif
-            </div>
-        @endforeach
+                    <div class="p-3">
+                        @if ($canEdit)
+                            {{-- Quill local: el div es el editor; el textarea oculto lleva el HTML al servidor --}}
+                            <textarea id="{{ $field }}" name="{{ $field }}" class="hidden">{{ old($field, $report->{$field}) }}</textarea>
+                            <div class="quill-editor bg-white dark:bg-gray-700 rounded-b-lg" data-target="{{ $field }}"
+                                style="min-height: 180px;"></div>
+                        @else
+                            <div class="prose prose-sm dark:prose-invert max-w-none p-1">
+                                {!! $report->{$field} ?: '<span class="text-gray-400">Sin contenido.</span>' !!}
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            @endforeach
 
-        @if ($canEdit)
-            <button type="submit"
-                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700">
-                Guardar contenido
-            </button>
-        @endif
-    </form>
+            @if ($canEdit)
+                <button type="submit"
+                    class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700">
+                    Guardar contenido
+                </button>
+            @endif
+        </form>
+    </details>
 
     {{-- Hallazgos --}}
     <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4">
         <div class="flex items-center justify-between mb-3">
-            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-                Hallazgos ({{ $findings->count() }})
-            </h3>
+            <div>
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                    Hallazgos ({{ $findings->count() }})
+                </h3>
+                <div class="flex items-center gap-4 text-xs text-gray-500 dark:text-gray-400 mt-1">
+                    <span class="inline-flex items-center gap-1.5">
+                        <span class="w-3 h-3 rounded-sm bg-blue-500 inline-block"></span> Estado actual (tech-support)
+                    </span>
+                    <span class="inline-flex items-center gap-1.5">
+                        <span class="w-3 h-3 rounded-sm bg-teal-500 inline-block"></span> Histórico (show log / NVRAM)
+                    </span>
+                </div>
+            </div>
             @if ($canEdit)
                 @can('create', App\Models\Finding::class)
                     <button type="button" onclick="document.getElementById('manual-finding').showModal()"
@@ -212,13 +239,27 @@
             @endif
         </div>
 
-        <div class="space-y-3">
-            @forelse ($findings as $finding)
-                @include('admin.reports._finding', ['finding' => $finding, 'canEdit' => $canEdit])
-            @empty
-                <p class="text-sm text-gray-400">Sin hallazgos para esta captura.</p>
-            @endforelse
-        </div>
+        @php($byArea = $findings->groupBy('area'))
+        @forelse (App\Services\Reporting\AreaStatusService::AREAS as $areaKey => $areaLabel)
+            @continue(! $byArea->has($areaKey))
+            @php($group = $byArea[$areaKey])
+            @php($histCount = $group->filter(fn ($f) => $f->isLogBased())->count())
+            <div id="area-{{ $areaKey }}" class="scroll-mt-24 mb-6">
+                <h4 class="text-base font-semibold text-gray-900 dark:text-white mb-1 border-b border-gray-200 dark:border-gray-700 pb-1">
+                    {{ $areaLabel }} ({{ $group->count() }})
+                    @if ($histCount > 0)
+                        <span class="text-xs font-normal text-gray-400">· {{ $group->count() - $histCount }} del estado actual, {{ $histCount }} del histórico del log</span>
+                    @endif
+                </h4>
+                <div class="space-y-3 mt-2">
+                    @foreach ($group as $finding)
+                        @include('admin.reports._finding', ['finding' => $finding, 'canEdit' => $canEdit])
+                    @endforeach
+                </div>
+            </div>
+        @empty
+            <p class="text-sm text-gray-400">Sin hallazgos para esta captura.</p>
+        @endforelse
     </div>
 
     {{-- Modal: hallazgo manual --}}

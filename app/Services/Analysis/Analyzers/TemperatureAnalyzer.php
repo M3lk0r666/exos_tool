@@ -46,17 +46,34 @@ class TemperatureAnalyzer implements AnalyzerInterface
                 continue;
             }
 
-            // Margen contra el máximo del propio hardware.
-            $remaining = $t['max'] - $t['temp'];
-            if ($remaining <= $margin) {
+            // Margen contra el TOPE DEL RANGO NORMAL del modelo (columna
+            // "Normal" de show temperature, p. ej. 10-100). El "Max" es el
+            // límite de apagado térmico y solo se usa como respaldo si el
+            // formato no incluyó el rango normal.
+            $normalMax = $t['normal_max'] ?? $t['max'];
+            $remaining = $normalMax - $t['temp'];
+
+            // Guardia proporcional: el margen en °C no escala igual en rangos
+            // angostos (sensor de aire 0-40) que amplios (sensor de CPU 10-100).
+            // Solo se advierte si además la lectura superó el 75 % del rango
+            // normal del modelo.
+            $inUpperQuarter = true;
+            if (isset($t['normal_min'], $t['normal_max'])
+                && $t['normal_min'] !== null && $t['normal_max'] !== null) {
+                $range = $t['normal_max'] - $t['normal_min'];
+                $inUpperQuarter = $range <= 0 || $t['temp'] >= $t['normal_min'] + 0.75 * $range;
+            }
+
+            if ($remaining <= $margin && $inUpperQuarter) {
                 $findings[] = new FindingData(
                     ruleCode: 'ENV-TEMP',
                     level: FindingSeverity::from($rule->level_warning),
                     area: 'environment',
                     entity: $t['unit'],
-                    title: "Temperatura de {$t['unit']} cerca del límite ({$t['temp']} °C)",
+                    title: "Temperatura de {$t['unit']} cerca del límite normal ({$t['temp']} °C)",
                     description: "{$t['unit']} opera a {$t['temp']} °C, a solo ".round($remaining, 1).
-                        " °C del máximo de fábrica ({$t['max']} °C). El estado aún es Normal, pero el margen es reducido.",
+                        " °C del tope del rango normal de su modelo ({$normalMax} °C según el propio equipo; ".
+                        "apagado térmico: {$t['max']} °C). El estado aún es Normal, pero el margen es reducido.",
                     impact: 'Sin margen ante un aumento de temperatura ambiente o falla de climatización.',
                     recommendation: 'Revisar climatización y ventilación del gabinete de forma preventiva.',
                     evidence: $evidence['text'] ?? null,

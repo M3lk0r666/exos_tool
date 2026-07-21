@@ -68,6 +68,46 @@ class LogsAnalyzer implements AnalyzerInterface
             }
         }
 
+        // --- Warnings operativos vigilados (LOG-WARN, lista editable) ---
+        if (($rule = $ctx->rule('LOG-WARN')) && $p->logWarnings !== []) {
+            $watchlist = $rule->params['components'] ?? ['HAL.Card.Warning'];
+
+            $byComponent = [];
+            foreach ($p->logWarnings as $w) {
+                foreach ($watchlist as $watched) {
+                    if (str_contains($w['component'], $watched)) {
+                        $byComponent[$w['component']][] = $w;
+                        break;
+                    }
+                }
+            }
+
+            foreach ($byComponent as $component => $events) {
+                $total = array_sum(array_column($events, 'count'));
+                $sample = array_slice($events, 0, 4);
+                $detail = implode("\n", array_map(
+                    fn ($e) => "- {$e['message']} (x{$e['count']}, {$e['date']})",
+                    $sample
+                ));
+                $evidence = $ctx->findEvidence('<Warn:'.$component.'>');
+
+                $findings[] = new FindingData(
+                    ruleCode: 'LOG-WARN',
+                    level: FindingSeverity::from($rule->level_warning),
+                    area: 'stability',
+                    entity: $component,
+                    title: "{$total} warning(s) del componente {$component}",
+                    description: "El log registra advertencias del componente vigilado {$component}:\n{$detail}".
+                        (count($events) > 4 ? "\n… y ".(count($events) - 4).' mensajes distintos más.' : ''),
+                    impact: 'Advertencias operativas del propio equipo; pueden anticipar fallas de hardware o configuración.',
+                    recommendation: 'Revisar el mensaje contra el catálogo EXOS / KB de GTAC (p. ej. KB 000112095 para '.
+                        'HAL.Card.Warning con slots no presentes). Si es recurrente, incluirlo en el caso con soporte.',
+                    evidence: $evidence['text'] ?? null,
+                    fileLocation: $evidence ? 'línea '.$evidence['line'].' (show log)' : 'show log',
+                );
+            }
+        }
+
         // --- Core dumps ---
         if (($rule = $ctx->rule('SYS-CORE')) && $p->coreDumps !== []) {
             $findings[] = new FindingData(

@@ -51,10 +51,16 @@ class DeviceController extends Controller
             ->withCount('findings')
             ->get();
 
+        // Eventos de log por día de la última captura: ubica visualmente el
+        // día de un incidente (picos de eventos).
+        $latestSummary = $captures->firstWhere('status', \App\Enums\CaptureStatus::Completed)?->raw_summary ?? [];
+        $logPerDay = $latestSummary['logs']['per_day'] ?? [];
+
         return view('admin.devices.show', [
             'device' => $device,
             'captures' => $captures,
             'trends' => $trends->forDevice($device),
+            'logPerDay' => $logPerDay,
         ]);
     }
 

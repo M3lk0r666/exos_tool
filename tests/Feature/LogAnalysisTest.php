@@ -59,6 +59,12 @@ class LogAnalysisTest extends TestCase
             'solo log',
             implode(' ', $capture->parser_warnings ?? [])
         );
+
+        // Eventos por día para el gráfico de incidentes (orden cronológico m/d/Y)
+        $perDay = $capture->raw_summary['logs']['per_day'] ?? [];
+        $this->assertNotEmpty($perDay);
+        $this->assertGreaterThan(0, array_sum($perDay));
+        $this->assertLessThanOrEqual($capture->raw_summary['logs']['total'], array_sum($perDay));
     }
 
     public function test_log_with_identity_headers_creates_device(): void
@@ -103,6 +109,67 @@ class LogAnalysisTest extends TestCase
 
         // Y el log sigue analizándose (reinicios detectados)
         $this->assertNotNull($capture->findings()->where('rule_code', 'SYS-REBOOT')->first());
+    }
+
+    public function test_epm_cpu_and_watched_warnings_generate_findings(): void
+    {
+        Storage::fake('local');
+
+        $this->seed(RolePermissionSeeder::class);
+        $this->seed(AnalyzerRuleSeeder::class);
+
+        $engineer = User::factory()->create();
+        $engineer->assignRole('engineer');
+        $client = Client::factory()->create();
+
+        // Eventos reales reportados por GTAC en el caso del cliente
+        $content = "* SW.1 # show log\n".
+            "07/20/2026 18:39:17.01 <Warn:EPM.cpu> CPU utilization monitor: process hal consumes 95 % CPU\n".
+            "07/20/2026 18:38:57.02 <Warn:EPM.cpu> CPU utilization monitor: process hal consumes 92 % CPU\n".
+            "07/20/2026 18:38:42.05 <Warn:EPM.cpu> CPU utilization monitor: process hal consumes 92 % CPU\n".
+            "06/18/2026 20:21:08.75 <Warn:HAL.Card.Warning> Slot-6 is not present to do card exec cmd POWER_OFF\n".
+            "06/18/2026 20:21:05.89 <Warn:HAL.Card.Warning> Slot-6 is not present to do card exec cmd REBOOT\n".
+            "07/20/2026 10:00:00.00 <Info:AAA.authPass> Login passed for user admin\n";
+
+        // Tormenta de caídas de link en el puerto 1:5 (incidente pasado; estado actual OK)
+        for ($i = 0; $i < 60; $i++) {
+            $content .= "07/20/2026 12:".str_pad((string) ($i % 60), 2, '0', STR_PAD_LEFT).":00.00 <Info:vlan.msgs.portLinkStateDown> Port 1:5 link down\n";
+        }
+        // Puerto con pocas caídas: no debe alertar
+        $content .= "07/20/2026 12:00:01.00 <Info:vlan.msgs.portLinkStateDown> Port 1:9 link down\n";
+
+        $this->actingAs($engineer)->post(route('admin.captures.store'), [
+            'client_id' => $client->id,
+            'analysis_type' => 'log',
+            'files' => [UploadedFile::fake()->createWithContent('gtac_case.txt', $content)],
+        ]);
+
+        $capture = Capture::first();
+
+        // LOG-CPU: proceso hal al 95 % => High (umbral crítico 70)
+        $cpu = $capture->findings()->where('rule_code', 'LOG-CPU')->first();
+        $this->assertNotNull($cpu);
+        $this->assertSame('hal', $cpu->entity);
+        $this->assertSame('high', $cpu->level->value);
+        $this->assertStringContainsString('95 %', $cpu->title);
+        $this->assertStringContainsString('3 alerta(s)', $cpu->description);
+
+        // LOG-WARN: componente vigilado HAL.Card.Warning
+        $warn = $capture->findings()->where('rule_code', 'LOG-WARN')->first();
+        $this->assertNotNull($warn);
+        $this->assertSame('HAL.Card.Warning', $warn->entity);
+        $this->assertStringContainsString('Slot-6 is not present', $warn->description);
+
+        // Los Info no generan hallazgos de warning
+        $this->assertSame(0, $capture->findings()->where('entity', 'AAA.authPass')->count());
+
+        // LOG-FLAP: 60 caídas del puerto 1:5 registradas en el log => Medium
+        $flap = $capture->findings()->where('rule_code', 'LOG-FLAP')->first();
+        $this->assertNotNull($flap);
+        $this->assertSame('1:5', $flap->entity);
+        $this->assertSame('medium', $flap->level->value);
+        // El puerto con 1 caída no alerta
+        $this->assertSame(0, $capture->findings()->where('rule_code', 'LOG-FLAP')->where('entity', '1:9')->count());
     }
 
     public function test_upload_requires_analysis_type(): void

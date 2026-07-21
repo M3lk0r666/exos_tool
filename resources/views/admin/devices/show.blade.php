@@ -129,6 +129,16 @@
                     <div data-chart="severity" data-series='@json($trends['severity'])' data-labels='@json($trends['labels'])'></div>
                 </div>
             @endif
+
+            @if (! empty($logPerDay))
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4">
+                    <h4 class="text-sm font-semibold text-gray-900 dark:text-white mb-1">Eventos de log por día (última captura)</h4>
+                    <p class="text-xs text-gray-400 mb-2">Un pico de eventos suele señalar el día de un incidente.</p>
+                    <div data-chart="bar"
+                        data-values='@json(array_values($logPerDay))'
+                        data-labels='@json(array_keys($logPerDay))'></div>
+                </div>
+            @endif
         </div>
     </div>
 </x-admin-layout>

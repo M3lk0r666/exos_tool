@@ -159,6 +159,12 @@
                             <span class="text-gray-700 dark:text-gray-300">
                                 {{ $finding->title }}
                                 <span class="text-xs text-gray-400 font-mono">{{ $finding->rule_code }}</span>
+                                @if ($key === 'persisting' && $finding->isLogBased())
+                                    <span class="text-xs font-bold px-2 py-0.5 rounded-full bg-red-600 text-white"
+                                        title="Este evento del log aparece en ambas capturas: no es un incidente aislado, es un problema crónico que requiere atención">
+                                        Crónico
+                                    </span>
+                                @endif
                             </span>
                         </li>
                     @empty

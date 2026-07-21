@@ -371,16 +371,18 @@
     <h3>Temperaturas por unidad</h3>
     <table>
         <thead>
-            <tr><th>Unidad</th><th>Actual</th><th>Estado</th><th>Máx. de fábrica</th><th>Margen</th></tr>
+            <tr><th>Unidad</th><th>Actual</th><th>Estado</th><th>Rango normal (modelo)</th><th>Apagado (Max)</th><th>Margen a normal</th></tr>
         </thead>
         <tbody>
             @foreach ($pdfTemps as $t)
+                @php($nmax = $t['normal_max'] ?? $t['max'])
                 <tr>
                     <td>{{ $t['unit'] }}</td>
                     <td>{{ $t['temp'] }} °C</td>
                     <td style="{{ $t['status'] === 'Normal' ? 'color:#16a34a;' : 'color:#dc2626; font-weight:bold;' }}">{{ $t['status'] }}</td>
+                    <td>{{ isset($t['normal_min']) && $t['normal_min'] !== null ? $t['normal_min'].'–'.$t['normal_max'].' °C' : '—' }}</td>
                     <td>{{ $t['max'] }} °C</td>
-                    <td>{{ round($t['max'] - $t['temp'], 1) }} °C</td>
+                    <td>{{ round($nmax - $t['temp'], 1) }} °C</td>
                 </tr>
             @endforeach
         </tbody>
@@ -436,7 +438,25 @@
     {{-- ============ 4. HALLAZGOS ============ --}}
     <h2>4. Hallazgos y evidencias</h2>
 
-    @forelse ($findings as $i => $finding)
+    @php($currentF = $findings->filter(fn ($f) => ! $f->isLogBased())->values())
+    @php($logF = $findings->filter(fn ($f) => $f->isLogBased())->values())
+    @php($findingsOrdered = $currentF->concat($logF)->values())
+
+    @forelse ($findingsOrdered as $i => $finding)
+        @if ($i === 0 && $currentF->isNotEmpty())
+            <div style="background:#eff6ff; border-left:5px solid #2563eb; padding:8px 10px; margin:10px 0 8px;">
+                <span style="font-size:13px; font-weight:bold; color:#1d4ed8;">4.1 Estado actual del equipo (tech-support)</span><br>
+                <span class="muted">Condiciones presentes al momento de la captura.</span>
+            </div>
+        @endif
+        @if ($i === $currentF->count() && $logF->isNotEmpty())
+            <div style="background:#f0fdfa; border-left:5px solid #0d9488; padding:8px 10px; margin:14px 0 8px;">
+                <span style="font-size:13px; font-weight:bold; color:#0f766e;">4.2 Histórico del equipo (show log / NVRAM)</span><br>
+                <span class="muted">Eventos ocurridos durante el periodo registrado en el log: aunque el estado
+                actual del equipo sea normal, estos incidentes sucedieron y son la base para acciones
+                correctivas o preventivas.</span>
+            </div>
+        @endif
         <div class="finding">
             <h3>
                 {{ $i + 1 }}. {{ $finding->title }}
@@ -445,6 +465,9 @@
                 </span>
                 @if ($finding->is_manual)
                     <span class="badge" style="background:#7c3aed;">Manual</span>
+                @endif
+                @if ($finding->isLogBased())
+                    <span class="badge" style="background:#0d9488;">Histórico</span>
                 @endif
             </h3>
             <p class="muted" style="margin:0 0 6px;">
