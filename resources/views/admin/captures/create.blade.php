@@ -4,7 +4,7 @@
     ['name' => 'Subir archivos'],
 ]">
     <div class="grid gap-4 xl:grid-cols-2 items-start">
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
+    <div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
 
         @if ($errors->any())
             <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-700 dark:text-red-400" role="alert">
@@ -86,7 +86,7 @@
     </div>
 
     {{-- Guía para preparar el archivo de log con identificación del equipo --}}
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 border-l-4 border-teal-500">
+    <div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6 border-l-4 border-teal-500">
         <h3 class="text-base font-semibold text-gray-900 dark:text-white mb-2">
             Cómo preparar el archivo de log (con datos del equipo)
         </h3>

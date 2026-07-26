@@ -79,54 +79,53 @@
     ];
 @endphp
 
-<aside id="logo-sidebar"
-    class="fixed top-0 left-0 z-40 w-64 h-screen pt-20 transition-transform -translate-x-full bg-white border-r border-gray-200 sm:translate-x-0 dark:bg-gray-800 dark:border-gray-700"
+<aside id="app-sidebar"
+    class="fixed top-0 left-0 z-40 w-64 h-screen pt-16 transition-[width] duration-200 -translate-x-full bg-white border-r border-gray-200 sm:translate-x-0 dark:bg-gray-800 dark:border-gray-700"
     aria-label="Sidebar">
-    <div class="h-full px-3 pb-4 overflow-y-auto bg-white dark:bg-gray-800">
-        <ul class="space-y-2 font-medium">
+    <div class="h-full flex flex-col overflow-y-auto overflow-x-hidden">
+        <ul class="flex-1 px-3 py-4 space-y-1 font-medium">
             @foreach ($links as $link)
                 @continue(isset($link['can']) && auth()->user()->cannot($link['can']))
                 <li>
                     @isset($link['header'])
-                        <div class="px-2 py-2 texst-xs font-bold text-gray-500 uppercase">
+                        <div class="sidebar-section px-2 pt-4 pb-1 text-[11px] font-bold tracking-wider text-gray-400 uppercase">
                             {{ $link['header'] }}
                         </div>
                     @else
-                        @isset($link['submenu'])
-                            <button type="button"
-                                class="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
-                                aria-controls="dropdown-example" data-collapse-toggle="dropdown-example">
-                                <span class="w-6 h-6 inline-flex justify-center items-center">
-                                    <i class="{{ $link['icon'] }}"></i>
-                                </span>
-                                <span class="flex-1 ms-3 text-left rtl:text-right whitespace-nowrap">{{ $link['name'] }}</span>
-                                <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
-                                    viewBox="0 0 10 6">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="m1 1 4 4 4-4" />
-                                </svg>
-                            </button>
-                            <ul id="dropdown-example" class="hidden py-2 space-y-2">
-                                @foreach ($link['submenu'] as $item)
-                                    <li>
-                                        <a href="{{ $item['href'] }}"
-                                            class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">{{ $item['name'] }}</a>
-                                    </li>
-                                @endforeach
-
-                            </ul>
-                        @else
-                            <a href="{{ $link['href'] }}"
-                                class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group {{ $link['active'] ? 'bg-gray-200' : '' }} ">
-                                <span class="w-6 h-6 inline-flex justify-center items-center">
-                                    <i class="{{ $link['icon'] }}"></i>
-                                </span>
-                                <span class="ms-3">{{ $link['name'] }}</span>
-                            </a>
-                        @endisset
+                        <a href="{{ $link['href'] }}"
+                            title="{{ $link['name'] }}"
+                            class="group flex items-center gap-3 p-2 rounded-md border-l-2 transition-colors
+                                {{ $link['active']
+                                    ? 'bg-blue-50 text-blue-700 border-blue-700 dark:bg-blue-900/40 dark:text-blue-300 font-semibold'
+                                    : 'text-gray-700 border-transparent hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-700' }}">
+                            <span class="w-6 h-6 inline-flex justify-center items-center shrink-0 text-lg">
+                                <i class="{{ $link['icon'] }}"></i>
+                            </span>
+                            <span class="sidebar-label whitespace-nowrap">{{ $link['name'] }}</span>
+                        </a>
                     @endisset
                 </li>
             @endforeach
         </ul>
+
+        {{-- Botón para colapsar / expandir --}}
+        <div class="border-t border-gray-200 dark:border-gray-700 p-2">
+            <button type="button" onclick="toggleSidebar()"
+                class="group flex items-center gap-3 w-full p-2 rounded-md text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700"
+                title="Colapsar / expandir menú">
+                <span class="w-6 h-6 inline-flex justify-center items-center shrink-0 text-lg">
+                    <i class="ri-menu-fold-line sidebar-icon-expanded"></i>
+                    <i class="ri-menu-unfold-line sidebar-icon-collapsed hidden"></i>
+                </span>
+                <span class="sidebar-label whitespace-nowrap text-sm">Colapsar menú</span>
+            </button>
+        </div>
     </div>
 </aside>
+
+<script>
+    function toggleSidebar() {
+        const collapsed = document.documentElement.classList.toggle('sidebar-collapsed');
+        try { localStorage.setItem('exos_sidebar_collapsed', collapsed ? '1' : '0'); } catch (e) {}
+    }
+</script>

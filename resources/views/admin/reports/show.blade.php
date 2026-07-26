@@ -7,16 +7,16 @@
     @php($canEdit = $isDraft && auth()->user()->can('update', $report))
 
     {{-- Encabezado y acciones --}}
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 mb-4">
+    <div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4 mb-4">
         <div class="flex flex-col lg:flex-row lg:items-center gap-3">
             <div>
-                <div class="flex items-center gap-2">
-                    <h2 class="text-xl font-bold text-gray-900 dark:text-white">
+                <div class="flex items-center gap-2 flex-wrap">
+                    <h1 class="text-xl font-bold text-gray-900 dark:text-white" style="font-family:'Hanken Grotesk',sans-serif;">
                         {{ $capture->device?->displayName() ?? 'Equipo' }}
                         <span class="text-gray-400 font-normal">· {{ $capture->client?->name }}</span>
-                    </h2>
-                    <span class="text-xs font-medium px-2.5 py-0.5 rounded-full
-                        {{ $isDraft ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300' : 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' }}">
+                    </h1>
+                    <span class="text-[11px] font-bold uppercase px-2 py-0.5 rounded-md
+                        {{ $isDraft ? 'bg-amber-50 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300' : 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300' }}">
                         v{{ $report->version }} · {{ $report->status->label() }}
                     </span>
                 </div>
@@ -31,15 +31,15 @@
 
             <div class="lg:ms-auto flex flex-wrap gap-2">
                 <a href="{{ route('admin.captures.show', $capture) }}"
-                    class="py-2 px-4 text-sm font-medium text-gray-900 bg-white rounded-lg border border-gray-200 hover:bg-gray-100 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:bg-gray-700">
+                    class="inline-flex items-center gap-1 py-2 px-4 text-sm font-medium text-gray-900 bg-white rounded-md border border-gray-200 hover:bg-gray-100 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700">
                     Ver captura
                 </a>
                 <a href="{{ route('admin.methodology.pdf') }}" title="Dictamen entregable: cómo se obtienen y validan los hallazgos"
-                    class="py-2 px-4 text-sm font-medium text-gray-900 bg-white rounded-lg border border-gray-200 hover:bg-gray-100 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:bg-gray-700">
+                    class="inline-flex items-center gap-1 py-2 px-4 text-sm font-medium text-gray-900 bg-white rounded-md border border-gray-200 hover:bg-gray-100 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700">
                     Dictamen metodológico
                 </a>
                 <a href="{{ route('admin.reports.pdf', $report) }}"
-                    class="py-2 px-4 text-sm font-medium text-white bg-gray-700 rounded-lg hover:bg-gray-800 dark:bg-gray-600 dark:hover:bg-gray-500">
+                    class="inline-flex items-center gap-1 py-2 px-4 text-sm font-medium text-white bg-gray-700 rounded-md hover:bg-gray-800 dark:bg-gray-600 dark:hover:bg-gray-500">
                     {{ $isDraft ? 'Vista previa PDF' : 'Descargar PDF' }}
                 </a>
                 @if ($isDraft)
@@ -48,7 +48,7 @@
                             onsubmit="return confirm('¿Emitir la versión v{{ $report->version }}? El reporte quedará congelado y se generará el PDF.');">
                             @csrf
                             <button type="submit"
-                                class="py-2 px-4 text-sm font-medium text-white bg-blue-700 rounded-lg hover:bg-blue-800 dark:bg-blue-600 dark:hover:bg-blue-700">
+                                class="py-2 px-4 text-sm font-semibold text-white bg-blue-700 rounded-md hover:bg-blue-800">
                                 Emitir versión
                             </button>
                         </form>
@@ -58,7 +58,7 @@
                         <form method="POST" action="{{ route('admin.reports.new-version', $report) }}">
                             @csrf
                             <button type="submit"
-                                class="py-2 px-4 text-sm font-medium text-white bg-blue-700 rounded-lg hover:bg-blue-800 dark:bg-blue-600 dark:hover:bg-blue-700">
+                                class="py-2 px-4 text-sm font-semibold text-white bg-blue-700 rounded-md hover:bg-blue-800">
                                 Crear nueva versión
                             </button>
                         </form>
@@ -69,7 +69,7 @@
     </div>
 
     {{-- Semáforo por área --}}
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 mb-4">
+    <div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4 mb-4">
         <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">Estado por área</h3>
         <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2">
             @foreach ($areas as $areaKey => $area)
@@ -91,7 +91,7 @@
         <div class="flex gap-2 mt-3">
             @foreach ($severityCounts as $level => $count)
                 @php($sev = App\Enums\FindingSeverity::from($level))
-                <span class="text-xs font-medium px-2.5 py-0.5 rounded-full {{ $sev->badgeClasses() }}">
+                <span class="text-[11px] font-bold uppercase px-2 py-0.5 rounded-md {{ $sev->badgeClasses() }}">
                     {{ $sev->label() }}: {{ $count }}
                 </span>
             @endforeach
@@ -171,7 +171,7 @@
     </div>
 
     {{-- Secciones editables (WYSIWYG) --}}
-    <details class="bg-white dark:bg-gray-800 rounded-lg shadow-sm mb-4 group">
+    <details class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 mb-4 group">
         <summary class="flex items-center gap-3 p-4 cursor-pointer select-none hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg">
             <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Contenido del reporte</h3>
             <span class="text-xs text-gray-400">Resumen ejecutivo, conclusiones y recomendaciones</span>
@@ -186,8 +186,10 @@
 
             @foreach (['executive_summary' => 'Resumen ejecutivo', 'conclusions' => 'Conclusiones', 'recommendations' => 'Recomendaciones'] as $field => $label)
                 <div class="mb-4 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
-                    <div class="px-4 py-2 bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600 text-sm font-semibold text-gray-900 dark:text-white">
-                        {{ $label }}
+                    <div class="px-4 py-2 bg-blue-50 dark:bg-blue-900/30 border-b border-blue-100 dark:border-blue-800">
+                        <span class="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wide px-2.5 py-1 rounded-md bg-blue-600 text-white">
+                            <i class="ri-file-text-line"></i> {{ $label }}
+                        </span>
                     </div>
                     <div class="p-3">
                         @if ($canEdit)
@@ -214,7 +216,7 @@
     </details>
 
     {{-- Hallazgos --}}
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4">
+    <div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4">
         <div class="flex items-center justify-between mb-3">
             <div>
                 <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
@@ -232,7 +234,7 @@
             @if ($canEdit)
                 @can('create', App\Models\Finding::class)
                     <button type="button" onclick="document.getElementById('manual-finding').showModal()"
-                        class="py-2 px-4 text-sm font-medium text-white bg-blue-700 rounded-lg hover:bg-blue-800 dark:bg-blue-600 dark:hover:bg-blue-700">
+                        class="py-2 px-4 text-sm font-semibold text-white bg-blue-700 rounded-md hover:bg-blue-800">
                         + Hallazgo manual
                     </button>
                 @endcan
@@ -244,13 +246,17 @@
             @continue(! $byArea->has($areaKey))
             @php($group = $byArea[$areaKey])
             @php($histCount = $group->filter(fn ($f) => $f->isLogBased())->count())
+            @php($areaWorst = $group->filter(fn ($f) => $f->status !== App\Enums\FindingStatus::FalsePositive)
+                ->map(fn ($f) => $f->level)->sortByDesc(fn ($l) => $l->weight())->first())
             <div id="area-{{ $areaKey }}" class="scroll-mt-24 mb-6">
-                <h4 class="text-base font-semibold text-gray-900 dark:text-white mb-1 border-b border-gray-200 dark:border-gray-700 pb-1">
-                    {{ $areaLabel }} ({{ $group->count() }})
+                <div class="flex items-center gap-2 mb-2 border-b border-gray-200 dark:border-gray-700 pb-2">
+                    <span class="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wide px-2.5 py-1 rounded-md {{ $areaWorst?->badgeClasses() ?? 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300' }}">
+                        {{ $areaLabel }} ({{ $group->count() }})
+                    </span>
                     @if ($histCount > 0)
-                        <span class="text-xs font-normal text-gray-400">· {{ $group->count() - $histCount }} del estado actual, {{ $histCount }} del histórico del log</span>
+                        <span class="text-xs text-gray-400">{{ $group->count() - $histCount }} del estado actual · {{ $histCount }} del histórico del log</span>
                     @endif
-                </h4>
+                </div>
                 <div class="space-y-3 mt-2">
                     @foreach ($group as $finding)
                         @include('admin.reports._finding', ['finding' => $finding, 'canEdit' => $canEdit])

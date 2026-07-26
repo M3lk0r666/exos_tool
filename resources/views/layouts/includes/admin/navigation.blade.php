@@ -2,7 +2,7 @@
     <div class="px-3 py-3 lg:px-5 lg:pl-3">
         <div class="flex items-center justify-between">
             <div class="flex items-center justify-start rtl:justify-end">
-                <button data-drawer-target="logo-sidebar" data-drawer-toggle="logo-sidebar" aria-controls="logo-sidebar"
+                <button data-drawer-target="app-sidebar" data-drawer-toggle="app-sidebar" aria-controls="app-sidebar"
                     type="button"
                     class="inline-flex items-center p-2 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600">
                     <span class="sr-only">Open sidebar</span>
@@ -13,10 +13,14 @@
                         </path>
                     </svg>
                 </button>
-                <a href="/" class="flex ms-2 md:me-24">
-                    <img src="https://flowbite.com/docs/images/logo.svg" class="h-8 me-3" alt="FlowBite Logo" />
-                    <span
-                        class="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap dark:text-white">Flowbite</span>
+                @php($brandLogo = App\Models\Setting::get('branding.company_logo'))
+                <a href="{{ url('/admin') }}" class="flex items-center ms-2 md:me-24 gap-2">
+                    @if ($brandLogo)
+                        <img src="{{ Storage::url($brandLogo) }}" class="h-8" alt="Logo" />
+                    @endif
+                    <span class="self-center text-xl font-bold sm:text-2xl whitespace-nowrap text-blue-700 dark:text-white"
+                        style="font-family: 'Hanken Grotesk', sans-serif;">EXOS-Tool</span>
+                    <span class="hidden sm:inline text-xs text-gray-400 uppercase tracking-wide">Rexten</span>
                 </a>
             </div>
             <div class="flex items-center">

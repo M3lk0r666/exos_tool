@@ -22,6 +22,9 @@ class ClientController extends Controller
             ->withCount(['devices', 'captures', 'reports'])
             ->withCount([
                 'findings as open_findings_count' => fn ($q) => $q->whereIn('findings.status', ['open', 'acknowledged', 'in_progress']),
+                'findings as critical_findings_count' => fn ($q) => $q
+                    ->whereIn('findings.level', ['critical', 'high'])
+                    ->where('findings.status', '!=', 'false_positive'),
             ])
             ->when($request->filled('search'), function ($query) use ($request) {
                 $search = $request->string('search');

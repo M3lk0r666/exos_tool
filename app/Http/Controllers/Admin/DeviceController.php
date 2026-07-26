@@ -20,7 +20,7 @@ class DeviceController extends Controller
         $this->authorize('viewAny', Device::class);
 
         $devices = Device::query()
-            ->with('client:id,name')
+            ->with(['client:id,name', 'latestCapture.findings'])
             ->withCount('captures')
             ->when($request->filled('client'), fn ($q) => $q->where('client_id', $request->integer('client')))
             ->when($request->filled('search'), function ($q) use ($request) {
@@ -37,7 +37,10 @@ class DeviceController extends Controller
 
         $clients = \App\Models\Client::orderBy('name')->pluck('name', 'id');
 
-        return view('admin.devices.index', compact('devices', 'clients'));
+        $totalDevices = Device::count();
+        $stackCount = Device::where('is_stack', true)->count();
+
+        return view('admin.devices.index', compact('devices', 'clients', 'totalDevices', 'stackCount'));
     }
 
     public function show(Device $device, TrendService $trends): View

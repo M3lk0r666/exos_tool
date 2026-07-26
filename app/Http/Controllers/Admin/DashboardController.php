@@ -21,6 +21,8 @@ class DashboardController extends Controller
             'captures' => Capture::where('status', 'completed')->count(),
             'reports_issued' => Report::where('status', 'issued')->count(),
             'open_findings' => Finding::whereIn('status', ['open', 'acknowledged', 'in_progress'])->count(),
+            'critical_findings' => Finding::where('status', '!=', 'false_positive')
+                ->whereIn('level', ['critical', 'high'])->count(),
         ];
 
         // Hallazgos por severidad (excluye falsos positivos)

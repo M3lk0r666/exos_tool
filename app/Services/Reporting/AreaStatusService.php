@@ -76,8 +76,8 @@ class AreaStatusService
         return match ($status) {
             'ok' => 'bg-green-50 border-green-300 text-green-800 dark:bg-green-900/30 dark:border-green-700 dark:text-green-300',
             'warning' => 'bg-yellow-50 border-yellow-300 text-yellow-800 dark:bg-yellow-900/30 dark:border-yellow-700 dark:text-yellow-300',
-            'severe' => 'bg-orange-50 border-orange-300 text-orange-800 dark:bg-orange-900/30 dark:border-orange-700 dark:text-orange-300',
-            'critical' => 'bg-red-50 border-red-300 text-red-800 dark:bg-red-900/30 dark:border-red-700 dark:text-red-300',
+            'severe' => 'bg-red-50 border-red-400 text-red-700 dark:bg-red-900/30 dark:border-red-600 dark:text-red-300',
+            'critical' => 'bg-red-100 border-red-500 text-red-800 dark:bg-red-900/50 dark:border-red-500 dark:text-red-200',
             default => 'bg-gray-50 border-gray-200 text-gray-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400',
         };
     }
@@ -88,8 +88,8 @@ class AreaStatusService
         return match ($status) {
             'ok' => '#16a34a',
             'warning' => '#ca8a04',
-            'severe' => '#ea580c',
-            'critical' => '#dc2626',
+            'severe' => '#e11d48',   // rojo (Alto): mayor atención, sin igualar al crítico
+            'critical' => '#b91c1c', // rojo profundo (Crítico)
             default => '#6b7280',
         };
     }

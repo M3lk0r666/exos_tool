@@ -440,79 +440,92 @@
 
     @php($currentF = $findings->filter(fn ($f) => ! $f->isLogBased())->values())
     @php($logF = $findings->filter(fn ($f) => $f->isLogBased())->values())
-    @php($findingsOrdered = $currentF->concat($logF)->values())
+    @php($areaOrder = array_keys(App\Services\Reporting\AreaStatusService::AREAS))
+    @php($n = 0)
 
-    @forelse ($findingsOrdered as $i => $finding)
-        @if ($i === 0 && $currentF->isNotEmpty())
-            <div style="background:#eff6ff; border-left:5px solid #2563eb; padding:8px 10px; margin:10px 0 8px;">
-                <span style="font-size:13px; font-weight:bold; color:#1d4ed8;">4.1 Estado actual del equipo (tech-support)</span><br>
-                <span class="muted">Condiciones presentes al momento de la captura.</span>
-            </div>
-        @endif
-        @if ($i === $currentF->count() && $logF->isNotEmpty())
-            <div style="background:#f0fdfa; border-left:5px solid #0d9488; padding:8px 10px; margin:14px 0 8px;">
-                <span style="font-size:13px; font-weight:bold; color:#0f766e;">4.2 Histórico del equipo (show log / NVRAM)</span><br>
-                <span class="muted">Eventos ocurridos durante el periodo registrado en el log: aunque el estado
-                actual del equipo sea normal, estos incidentes sucedieron y son la base para acciones
-                correctivas o preventivas.</span>
-            </div>
-        @endif
-        <div class="finding">
-            <h3>
-                {{ $i + 1 }}. {{ $finding->title }}
-                <span class="badge" style="background: {{ $severityMeta[$finding->level->value]['color'] }};">
-                    {{ $finding->level->label() }}
-                </span>
-                @if ($finding->is_manual)
-                    <span class="badge" style="background:#7c3aed;">Manual</span>
-                @endif
-                @if ($finding->isLogBased())
-                    <span class="badge" style="background:#0d9488;">Histórico</span>
-                @endif
-            </h3>
-            <p class="muted" style="margin:0 0 6px;">
-                Área: {{ App\Services\Reporting\AreaStatusService::label($finding->area) }}
-                @if ($finding->entity)
-                    · Entidad: {{ $finding->entity }}
-                @endif
-                · Regla: {{ $finding->rule_code }}
-                @if ($finding->status !== App\Enums\FindingStatus::Open)
-                    · Estado: {{ $finding->status->label() }}
-                @endif
-            </p>
-
-            <p>{{ $finding->description }}</p>
-
-            @if ($finding->impact)
-                <p><b>Impacto:</b> {{ $finding->impact }}</p>
-            @endif
-            @if ($finding->recommendation)
-                <p><b>Recomendación:</b> {{ $finding->recommendation }}</p>
-            @endif
-
-            @if ($finding->evidence)
-                <div class="evidence">{{ $finding->evidence }}</div>
-                @if ($finding->file_location)
-                    <div class="foot-note">Evidencia: {{ $finding->file_location }} del archivo analizado.</div>
-                @endif
-            @endif
-
-            @foreach ($finding->attachments as $attachment)
-                @if ($attachment->type === 'image' && is_file(storage_path('app/public/' . $attachment->path)))
-                    <img class="attachment-img" src="{{ storage_path('app/public/' . $attachment->path) }}"
-                        alt="">
-                    @if ($attachment->caption)
-                        <div class="foot-note">{{ $attachment->caption }}</div>
-                    @endif
-                @elseif ($attachment->original_filename)
-                    <div class="foot-note">Adjunto: {{ $attachment->original_filename }}
-                        {{ $attachment->caption ? '— ' . $attachment->caption : '' }}</div>
-                @endif
-            @endforeach
-        </div>
-    @empty
+    @if ($findings->isEmpty())
         <p class="muted">No se registraron hallazgos para esta captura.</p>
-    @endforelse
+    @endif
+
+    @foreach ([
+        ['4.1 Estado actual del equipo (tech-support)', 'Condiciones presentes al momento de la captura.', '#eff6ff', '#2563eb', '#1d4ed8', $currentF],
+        ['4.2 Histórico del equipo (show log / NVRAM)', 'Eventos ocurridos durante el periodo registrado en el log: aunque el estado actual del equipo sea normal, estos incidentes sucedieron y son la base para acciones correctivas o preventivas.', '#f0fdfa', '#0d9488', '#0f766e', $logF],
+    ] as [$blockTitle, $blockNote, $blockBg, $blockBorder, $blockColor, $blockFindings])
+        @continue($blockFindings->isEmpty())
+
+        <div style="background:{{ $blockBg }}; border-left:5px solid {{ $blockBorder }}; padding:8px 10px; margin:14px 0 8px;">
+            <span style="font-size:13px; font-weight:bold; color:{{ $blockColor }};">{{ $blockTitle }}</span><br>
+            <span class="muted">{{ $blockNote }}</span>
+        </div>
+
+        @php($byArea = $blockFindings->groupBy('area'))
+        @foreach ($areaOrder as $areaKey)
+            @continue(! $byArea->has($areaKey))
+            @php($group = $byArea[$areaKey])
+            @php($areaWorst = $group->filter(fn ($f) => $f->status !== App\Enums\FindingStatus::FalsePositive)
+                ->map(fn ($f) => $f->level)->sortByDesc(fn ($l) => $l->weight())->first())
+            @php($areaColor = $areaWorst ? $severityMeta[$areaWorst->value]['color'] : '#6b7280')
+
+            <table style="width:auto; border:none; margin:10px 0 4px;">
+                <tr><td style="border:none; padding:3px 8px; background:{{ $areaColor }}; border-radius:3px;">
+                    <span style="color:#fff; font-size:11px; font-weight:bold; text-transform:uppercase;">{{ App\Services\Reporting\AreaStatusService::label($areaKey) }} ({{ $group->count() }})</span>
+                </td></tr>
+            </table>
+
+            @foreach ($group as $finding)
+                @php($n++)
+                <div class="finding">
+                    <h3>
+                        {{ $n }}. {{ $finding->title }}
+                        <span class="badge" style="background: {{ $severityMeta[$finding->level->value]['color'] }};">
+                            {{ $finding->level->label() }}
+                        </span>
+                        @if ($finding->is_manual)
+                            <span class="badge" style="background:#7c3aed;">Manual</span>
+                        @endif
+                        @if ($finding->isLogBased())
+                            <span class="badge" style="background:#0d9488;">Histórico</span>
+                        @endif
+                    </h3>
+                    <p class="muted" style="margin:0 0 6px;">
+                        @if ($finding->entity)Entidad: {{ $finding->entity }} · @endif
+                        Regla: {{ $finding->rule_code }}
+                        @if ($finding->status !== App\Enums\FindingStatus::Open)
+                            · Estado: {{ $finding->status->label() }}
+                        @endif
+                    </p>
+
+                    <p>{{ $finding->description }}</p>
+
+                    @if ($finding->impact)
+                        <p><b>Impacto:</b> {{ $finding->impact }}</p>
+                    @endif
+                    @if ($finding->recommendation)
+                        <p><b>Recomendación:</b> {{ $finding->recommendation }}</p>
+                    @endif
+
+                    @if ($finding->evidence)
+                        <div class="evidence">{{ $finding->evidence }}</div>
+                        @if ($finding->file_location)
+                            <div class="foot-note">Evidencia: {{ $finding->file_location }} del archivo analizado.</div>
+                        @endif
+                    @endif
+
+                    @foreach ($finding->attachments as $attachment)
+                        @if ($attachment->type === 'image' && is_file(storage_path('app/public/' . $attachment->path)))
+                            <img class="attachment-img" src="{{ storage_path('app/public/' . $attachment->path) }}" alt="">
+                            @if ($attachment->caption)
+                                <div class="foot-note">{{ $attachment->caption }}</div>
+                            @endif
+                        @elseif ($attachment->original_filename)
+                            <div class="foot-note">Adjunto: {{ $attachment->original_filename }}
+                                {{ $attachment->caption ? '— ' . $attachment->caption : '' }}</div>
+                        @endif
+                    @endforeach
+                </div>
+            @endforeach
+        @endforeach
+    @endforeach
 
     {{-- ============ 5 y 6. CONCLUSIONES Y RECOMENDACIONES ============ --}}
     <h2>5. Conclusiones</h2>

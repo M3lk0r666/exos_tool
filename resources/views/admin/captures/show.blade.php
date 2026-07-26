@@ -7,18 +7,18 @@
     @php($serials = $summary['serial_numbers'] ?? [])
 
     {{-- ===== Encabezado: identificación del equipo ===== --}}
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 mb-4">
+    <div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4 mb-4">
         <div class="flex flex-col lg:flex-row lg:items-center gap-3 mb-4">
-            <div class="flex items-center gap-3">
-                <h2 class="text-xl font-bold text-gray-900 dark:text-white">Captura #{{ $capture->id }}</h2>
-                <span class="text-xs font-medium px-2.5 py-0.5 rounded-full {{ $capture->status->badgeClasses() }}"
+            <div class="flex items-center gap-2 flex-wrap">
+                <h1 class="text-xl font-bold text-gray-900 dark:text-white" style="font-family:'Hanken Grotesk',sans-serif;">Captura #{{ $capture->id }}</h1>
+                <span class="text-[11px] font-bold uppercase px-2 py-0.5 rounded-md {{ $capture->status->badgeClasses() }}"
                     @if ($capture->error_message) title="{{ $capture->error_message }}" @endif>
                     {{ $capture->status->label() }}
                 </span>
-                <span class="text-xs font-medium px-2.5 py-0.5 rounded-full
+                <span class="text-[11px] font-bold uppercase px-2 py-0.5 rounded-md
                     {{ $capture->isLogAnalysis()
-                        ? 'bg-teal-100 text-teal-800 dark:bg-teal-900 dark:text-teal-300'
-                        : 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300' }}">
+                        ? 'bg-teal-50 text-teal-700 dark:bg-teal-900/40 dark:text-teal-300'
+                        : 'bg-blue-50 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300' }}">
                     {{ $capture->analysisTypeLabel() }}
                 </span>
                 <span class="text-sm text-gray-500 dark:text-gray-400">{{ $capture->client?->name }}</span>
@@ -27,17 +27,17 @@
             @if ($capture->status === App\Enums\CaptureStatus::Completed)
                 <div class="lg:ms-auto flex flex-wrap gap-2">
                     <a href="{{ route('admin.captures.export.json', $capture) }}"
-                        class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-900 bg-white rounded-lg border border-gray-200 hover:bg-gray-100 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:bg-gray-700">
-                        JSON
+                        class="inline-flex items-center gap-1 px-3 py-2 text-sm font-medium text-gray-900 bg-white rounded-md border border-gray-200 hover:bg-gray-100 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700">
+                        <i class="ri-file-code-line"></i> JSON
                     </a>
                     <a href="{{ route('admin.captures.export.excel', $capture) }}"
-                        class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-900 bg-white rounded-lg border border-gray-200 hover:bg-gray-100 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:bg-gray-700">
-                        Excel
+                        class="inline-flex items-center gap-1 px-3 py-2 text-sm font-medium text-gray-900 bg-white rounded-md border border-gray-200 hover:bg-gray-100 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700">
+                        <i class="ri-file-excel-2-line"></i> Excel
                     </a>
                     @can('viewAny', App\Models\Report::class)
                         <a href="{{ route('admin.reports.for-capture', $capture) }}"
-                            class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-700 rounded-lg hover:bg-blue-800 dark:bg-blue-600 dark:hover:bg-blue-700">
-                            Generar / abrir reporte
+                            class="inline-flex items-center gap-1 px-4 py-2 text-sm font-semibold text-white bg-blue-700 rounded-md hover:bg-blue-800">
+                            <i class="ri-file-chart-line"></i> Generar / abrir reporte
                         </a>
                     @endcan
                 </div>
@@ -46,7 +46,7 @@
 
         {{-- Datos destacados: equipo, serie(s), versión --}}
         <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4 mb-3">
-            <div class="p-3 rounded-lg border-2 border-blue-200 bg-blue-50 dark:bg-blue-900/20 dark:border-blue-800">
+            <div class="p-3 rounded-md border border-blue-200 bg-blue-50 dark:bg-blue-900/20 dark:border-blue-800">
                 <div class="text-xs uppercase font-semibold text-blue-700 dark:text-blue-300">Equipo</div>
                 <div class="text-lg font-bold text-gray-900 dark:text-white leading-tight">
                     {{ $capture->device?->displayName() ?? $summary['sysname'] ?? '—' }}
@@ -59,7 +59,7 @@
                 </div>
             </div>
 
-            <div class="p-3 rounded-lg border-2 border-blue-200 bg-blue-50 dark:bg-blue-900/20 dark:border-blue-800">
+            <div class="p-3 rounded-md border border-blue-200 bg-blue-50 dark:bg-blue-900/20 dark:border-blue-800">
                 <div class="text-xs uppercase font-semibold text-blue-700 dark:text-blue-300">Número(s) de serie</div>
                 @if ($serials === [])
                     <div class="text-lg font-bold text-gray-400">—</div>
@@ -74,7 +74,7 @@
                 @endif
             </div>
 
-            <div class="p-3 rounded-lg border-2 border-blue-200 bg-blue-50 dark:bg-blue-900/20 dark:border-blue-800">
+            <div class="p-3 rounded-md border border-blue-200 bg-blue-50 dark:bg-blue-900/20 dark:border-blue-800">
                 <div class="text-xs uppercase font-semibold text-blue-700 dark:text-blue-300">Versión EXOS</div>
                 <div class="text-lg font-bold font-mono text-gray-900 dark:text-white">{{ $capture->exos_version ?? '—' }}</div>
                 <div class="text-xs text-gray-500 dark:text-gray-400">BootROM {{ $summary['bootrom'] ?? '—' }}</div>
@@ -104,15 +104,15 @@
 
     {{-- ===== Resumen del equipo ===== --}}
     @if (! empty($summary))
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 mb-4">
+        <div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6 mb-4">
             <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Resumen del equipo</h3>
             <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 text-sm">
-                <div class="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                <div class="p-3 bg-gray-50 dark:bg-gray-700/50 rounded-md border border-gray-100 dark:border-gray-700">
                     <div class="text-gray-500 dark:text-gray-400 text-xs uppercase">Firmware</div>
                     <div class="font-medium text-gray-900 dark:text-white font-mono">{{ $summary['exos_version'] ?? '—' }}</div>
                     <div class="text-xs text-gray-400">{{ $summary['firmware_build_date'] ?? '' }}</div>
                 </div>
-                <div class="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                <div class="p-3 bg-gray-50 dark:bg-gray-700/50 rounded-md border border-gray-100 dark:border-gray-700">
                     <div class="text-gray-500 dark:text-gray-400 text-xs uppercase">Ventiladores / PSU</div>
                     <div class="font-medium text-gray-900 dark:text-white">
                         {{ $summary['fans']['ok'] ?? 0 }} OK
@@ -124,7 +124,7 @@
                         PSU: {{ $summary['power']['on'] ?? 0 }} encendidas, {{ $summary['power']['failed'] ?? 0 }} en falla
                     </div>
                 </div>
-                <div class="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                <div class="p-3 bg-gray-50 dark:bg-gray-700/50 rounded-md border border-gray-100 dark:border-gray-700">
                     <div class="text-gray-500 dark:text-gray-400 text-xs uppercase">CPU 1h / Memoria</div>
                     <div class="font-medium text-gray-900 dark:text-white">
                         {{ isset($summary['cpu_1h']) && $summary['cpu_1h'] !== null ? $summary['cpu_1h'].' %' : 'n/d' }}
@@ -135,7 +135,7 @@
                         @endforeach
                     </div>
                 </div>
-                <div class="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                <div class="p-3 bg-gray-50 dark:bg-gray-700/50 rounded-md border border-gray-100 dark:border-gray-700">
                     <div class="text-gray-500 dark:text-gray-400 text-xs uppercase">Temperaturas</div>
                     @forelse ($summary['temperatures'] ?? [] as $t)
                         <div class="text-sm text-gray-900 dark:text-white">
@@ -146,7 +146,7 @@
                         <div class="text-gray-400">n/d</div>
                     @endforelse
                 </div>
-                <div class="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                <div class="p-3 bg-gray-50 dark:bg-gray-700/50 rounded-md border border-gray-100 dark:border-gray-700">
                     <div class="text-gray-500 dark:text-gray-400 text-xs uppercase">Logs</div>
                     <div class="font-medium text-gray-900 dark:text-white">{{ $summary['logs']['total'] ?? 0 }} eventos</div>
                     <div class="text-xs text-gray-400">
@@ -159,7 +159,7 @@
                         @endforeach
                     </div>
                 </div>
-                <div class="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                <div class="p-3 bg-gray-50 dark:bg-gray-700/50 rounded-md border border-gray-100 dark:border-gray-700">
                     <div class="text-gray-500 dark:text-gray-400 text-xs uppercase">Puertos</div>
                     <div class="font-medium text-gray-900 dark:text-white">
                         {{ $summary['ports']['active'] ?? 0 }} activos
@@ -175,7 +175,7 @@
 
     {{-- ===== Advertencias del parser ===== --}}
     @if (! empty($capture->parser_warnings))
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 mb-4">
+        <div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6 mb-4">
             <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">
                 Advertencias del parser ({{ count($capture->parser_warnings) }})
             </h3>
@@ -189,7 +189,7 @@
 
     {{-- ===== Hallazgos ===== --}}
     @if ($findings->isNotEmpty())
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 mb-4">
+        <div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6 mb-4">
             <div class="flex items-center justify-between mb-4">
                 <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
                     Hallazgos del análisis ({{ $findings->count() }})
@@ -254,7 +254,7 @@
 
     {{-- ===== Métricas ===== --}}
     @if ($metricsSummary->isNotEmpty())
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
+        <div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
             <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">Métricas normalizadas</h3>
             <div class="flex flex-wrap gap-2">
                 @foreach ($metricsSummary as $category => $total)

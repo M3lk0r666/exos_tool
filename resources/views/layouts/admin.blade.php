@@ -13,9 +13,18 @@
 
     <title>{{ config('app.name', 'Laravel') }}</title>
 
-    <!-- Fonts -->
+    {{-- Restaura el estado colapsado del sidebar antes de pintar (evita parpadeo) --}}
+    <script>
+        try {
+            if (localStorage.getItem('exos_sidebar_collapsed') === '1') {
+                document.documentElement.classList.add('sidebar-collapsed');
+            }
+        } catch (e) {}
+    </script>
+
+    <!-- Fonts (DESIGN.md): Inter · Hanken Grotesk · JetBrains Mono -->
     <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+    <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700|hanken-grotesk:600,700|jetbrains-mono:400,500&display=swap" rel="stylesheet" />
 
     <!-- Wire UI -->
     <wireui:scripts />
@@ -32,7 +41,7 @@
     @livewireStyles
 </head>
 
-<body class="font-sans antialiased bg-gray-50">
+<body class="font-sans antialiased bg-surface">
 
     <!-- navigation -->
     @include('layouts.includes.admin.navigation')
@@ -41,7 +50,7 @@
     <!-- Sidebar -->
     @include('layouts.includes.admin.sidebar')
 
-    <div class="p-4 sm:ml-64">
+    <div id="app-main" class="p-4 sm:ml-64 transition-[margin] duration-200">
         <div class="mt-14">
             @include('layouts.includes.admin.breadcrumbs')
 
